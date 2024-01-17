@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xaml-comp compile="true" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                    xmlns:local="clr-namespace:TimesheetApp.Controls.View"
+                    xmlns:controls="clr-namespace:TimesheetApp.Controls">
+
+    <Style TargetType="{x:Type Grid}">
+        <Setter Property="MinimumHeightRequest" Value="50" />
+        <Setter Property="ColumnDefinitions" Value="*, auto" />
+    </Style>
+
+    <Style TargetType="{x:Type Image}">
+        <Setter Property="Source" Value="{Binding Source={RelativeSource AncestorType={x:Type local:BaseView}}, Path=ImageSource}" />
+        <Setter Property="Margin" Value="8, 0" />
+        <Style.Triggers>
+            <DataTrigger TargetType="{x:Type Image}" 
+                         Binding="{Binding Source={RelativeSource AncestorType={x:Type local:BaseView}}, Path=ImageSource}" 
+                         Value="{x:Static x:String.Empty}">
+                <Setter Property="IsVisible" Value="False" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <DataTemplate x:DataType="{x:Type local:BaseView}" x:Key="viewTemplate">
+        <Grid ColumnDefinitions="auto, *" >
+            <Image Grid.Column="0" />
+
+            <VerticalStackLayout Grid.Column="1"
+                                 HorizontalOptions="Start"
+                                 VerticalOptions="Center"
+                                 Margin="8" >
+                <Label Style="{StaticResource SmallLabel}"
+                       HorizontalOptions="Start"
+                       Text="{Binding Description}" />
+
+                <Label Style="{StaticResource InfoLabel}"
+                       Text="{Binding Info}" x:Name="info" />
+
+                <!-- Workaround to solve this issue:
+                https://learn.microsoft.com/en-us/answers/questions/1161782/label-will-not-expand-vertically-with-multi-line-t?page=1&orderby=Helpful#answers
+                -->
+                <StackLayout BackgroundColor="Transparent" 
+                             Margin="0"
+                             HeightRequest="10" 
+                             IsVisible="{Binding Source={x:Reference info}, Path=IsVisible}"/>
+            </VerticalStackLayout>
+        </Grid>
+    </DataTemplate>
+
+    <Style TargetType="{x:Type controls:TemplatedContentPresenter}">
+        <Setter Property="Grid.Column" Value="0" />
+        <Setter Property="Data" Value="{Binding }" />
+        <Setter Property="DataTemplate" Value="{StaticResource viewTemplate}" />
+    </Style>
+</ResourceDictionary>

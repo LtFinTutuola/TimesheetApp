@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<view:BaseContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                      xmlns:view="clr-namespace:TimesheetApp.View"
+                      xmlns:vm="clr-namespace:TimesheetApp.ViewModel.Navigation"
+                      xmlns:entities="clr-namespace:TimesheetApp.Model.Entities"
+                      xmlns:controls="clr-namespace:TimesheetApp.Controls"
+                      xmlns:views="clr-namespace:TimesheetApp.Controls.View"
+                      xmlns:templates="clr-namespace:TimesheetApp.Resources.Templates.Settings"
+                      
+                      x:Class="TimesheetApp.View.Navigation.SettingsUpdatePage"
+                      x:DataType="vm:SettingsUpdateViewModel">
+    <view:BaseContentPage.Resources>
+        <ResourceDictionary Source="../../Resources/Templates/Settings/SettingsTemplates.xaml" />
+        
+        <!-- Template selector to show proper template based on settings category to update -->
+        <templates:SettingsUpdateTemplateSelector x:Key="SettingsTemplateSelector"
+                                                  OvertimeTemplate="{StaticResource OvertimeTemplate}"
+                                                  HourlyBankTemplate="{StaticResource HourlyBankTemplate}"
+                                                  LateTemplate="{StaticResource LateTemplate}"
+                                                  WorkingDaysTemplate="{StaticResource WorkingDaysTemplate}"
+                                                  ThemeTemplate="{StaticResource ThemeTemplate}"
+                                                  ContactsTemplate="{StaticResource ContactsTemplate}"
+                                                  ResetTemplate="{StaticResource ResetTemplate}" />
+
+    </view:BaseContentPage.Resources>
+    <Grid RowDefinitions="auto, *, auto">
+        <!-- Header -->
+        <Border Style="{StaticResource HeaderBorder}">
+            <Grid ColumnDefinitions="auto, *, auto"
+                  Margin="12, 0">
+                <ImageButton Style="{StaticResource BackButton}"/>
+
+                <Label Grid.Column="1"
+                       Style="{StaticResource TitleLabel}"
+                       Text="{Binding Title}"/>
+
+                <!-- Reset settings category -->
+                <ImageButton Source="../../Resources/Images/reset.png"
+                             Command="{Binding ResetPartiallySettingsCommand}">
+                    <ImageButton.Style>
+                        <Style TargetType="{x:Type ImageButton}" BasedOn="{StaticResource RightHeaderButton}">
+                            <Style.Triggers>
+                                <DataTrigger TargetType="{x:Type ImageButton}"
+                                             Binding="{Binding CanReset}" Value="False">
+                                    <Setter Property="IsEnabled" Value="False" />
+                                    <Setter Property="Opacity" Value="0.3" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ImageButton.Style>
+                </ImageButton>
+            </Grid>
+        </Border>
+
+        <!-- Template presenter -->
+        <controls:TemplatedContentPresenter Grid.Row="1"
+                                            Data="{Binding Settings}" 
+                                            DataTemplateSelector="{StaticResource SettingsTemplateSelector}" />
+
+        <!-- Action button -->
+        <Button Grid.Row="2"
+                Style="{StaticResource MainButton}"
+                Text="{Binding Action}"
+                Command="{Binding ExecuteActionCommand}" />
+    </Grid>
+</view:BaseContentPage>

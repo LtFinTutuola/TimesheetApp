@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<view:BaseContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                      xmlns:view="clr-namespace:TimesheetApp.View"
+                      xmlns:vm="clr-namespace:TimesheetApp.ViewModel.Navigation"
+                      xmlns:controls="clr-namespace:TimesheetApp.Controls.View"
+                      xmlns:capt="clr-namespace:TimesheetApp.Model.Context"
+                      
+                      x:Class="TimesheetApp.View.Navigation.WorkshiftPage" 
+                      x:DataType="vm:WorkshiftViewModel">
+    <Grid RowDefinitions="auto, *, auto">
+        <!-- Header -->
+        <Border Style="{StaticResource HeaderBorder}">
+            <Grid ColumnDefinitions="auto, *, auto"
+                  Margin="12, 0">
+                <ImageButton Style="{StaticResource BackButton}"/>
+
+                <Label Grid.Column="1">
+                    <Label.Style>
+                        <Style TargetType="{x:Type Label}" BasedOn="{StaticResource TitleLabel}">
+                            <Setter Property="Text" Value="Modifica turno" />
+                            <Style.Triggers>
+                                <DataTrigger TargetType="{x:Type Label}"
+                                             Binding="{Binding Workshift.ID}" Value="0">
+                                    <Setter Property="Text" Value="Crea turno" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Label.Style>
+                </Label>
+
+                <ImageButton Source="../../Resources/Images/delete.png"
+                             Command="{Binding DeleteWorkshiftCommand}">
+                    <ImageButton.Style>
+                        <Style TargetType="{x:Type ImageButton}" BasedOn="{StaticResource RightHeaderButton}">
+                            <Style.Triggers>
+                                <DataTrigger TargetType="{x:Type ImageButton}"
+                                             Binding="{Binding Workshift.ID}"
+                                             Value="0">
+                                    <Setter Property="IsEnabled" Value="False" />
+                                    <Setter Property="Opacity" Value="0.3" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ImageButton.Style>
+                </ImageButton>
+            </Grid>
+        </Border>
+
+        <ScrollView Grid.Row="1"
+                    VerticalScrollBarVisibility="Never">
+            <VerticalStackLayout>
+                <VerticalStackLayout.Resources>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="Margin" Value="12, 12, 12, 0" />
+                        <Setter Property="Padding" Value="8" />
+                    </Style>
+                </VerticalStackLayout.Resources>
+                
+                <!-- Description / default -->
+                <Border>
+                    <VerticalStackLayout>
+                        <controls:TextView Text="{Binding Workshift.Description}"
+                                           Description="Descrizione turno"/>
+                        <StackLayout />
+                        <controls:SwitchView Description="Default"
+                                             Switch="{Binding Workshift.IsDefault}"
+                                             Info="{x:Static capt:Captions.WorkshiftDefaultInfo}"/>
+                    </VerticalStackLayout>                    
+                </Border>
+                
+                <!-- Enter / Exit / HourlyFlexibility -->
+                <Border>
+                    <VerticalStackLayout>
+                        <controls:TimeView Description="Orario di entrata"
+                                           Time="{Binding Workshift.MorningEnter}"
+                                           PickerText="Modifica orario di entrata"
+                                           Info="{x:Static capt:Captions.WorkshiftEnterInfo}"/>
+                        <StackLayout />                        
+                        <controls:TimeView Description="Orario di uscita"
+                                           Time="{Binding Workshift.AfternoonExit}" 
+                                           PickerText="Modifica orario di uscita"
+                                           Info="{x:Static capt:Captions.WorkshiftExitInfo}"/>
+                        <StackLayout />                        
+                        <controls:TimeView Description="Flessibilità oraria"
+                                           Time="{Binding Workshift.HourlyFlex}" 
+                                           PickerText="Modifica flessibilità oraria"/>
+                    </VerticalStackLayout>
+                </Border>
+                
+                <!-- Lunch pause -->
+                <Border>
+                    <VerticalStackLayout>
+                        <controls:SwitchView Description="Pausa pranzo"
+                                             Switch="{Binding Workshift.HasLunchPause}" 
+                                             Info="{x:Static capt:Captions.WorkshiftLunchPauseInfo}" 
+                                             x:Name="PauseSwitch"/>                        
+
+                        <VerticalStackLayout IsVisible="{Binding Source={x:Reference PauseSwitch}, Path=Switch}">
+                            <StackLayout />
+                            <controls:TimeView Description="Inizio pausa"
+                                               Time="{Binding Workshift.LunchPauseStarting}"
+                                               PickerText="Modifica inizio pausa"/>
+                            <StackLayout />
+                            <controls:TimeView Description="Fine pausa"
+                                               Time="{Binding Workshift.LunchPauseEnding}"
+                                               PickerText="Modifica fine pausa"/>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Button Grid.Row="2"
+                Style="{StaticResource MainButton}"
+                Text="Salva"
+                Command="{Binding SaveUpdateWorkshiftCommand}" />
+    </Grid>
+</view:BaseContentPage>

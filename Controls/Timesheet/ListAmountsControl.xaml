@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<local:TimesheetControl xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                        xmlns:local="clr-namespace:TimesheetApp.Controls.Timesheet"
+                        x:Class="TimesheetApp.Controls.Timesheet.ListAmountsControl"
+                        x:DataType="local:ListAmountsControl"
+                        x:Name="amountControl">
+    <CollectionView ItemsLayout="HorizontalList"
+                    x:Name="AmountsList"
+                    BindingContext="{x:Reference amountControl}">
+        <CollectionView.ItemTemplate>
+            <DataTemplate>
+                <Border >
+                    <Border.Style>
+                        <Style TargetType="Border" BasedOn="{StaticResource RoundedBorder}">
+                            <Setter Property="Margin" Value="4" />
+                            <Setter Property="HeightRequest" Value="25" />
+                            <Setter Property="WidthRequest" Value="25" />
+                            <Style.Triggers>
+                                <DataTrigger TargetType="Border"
+                                             Binding="{Binding Source={x:Reference amountControl}, Path=IsCompact}" 
+                                             Value="True">
+                                    <Setter Property="Margin" Value="-2, 0" />
+                                    <Setter Property="HeightRequest" Value="18" />
+                                    <Setter Property="WidthRequest" Value="18" />
+                                    <Setter Property="Background" Value="Transparent" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <Image Source="{Binding Converter={StaticResource AmountKindIconConverter}}"
+                           HeightRequest="16">
+                        <Image.Style>
+                            <Style TargetType="Image">
+                                <Setter Property="HeightRequest" Value="16" />
+                                <Style.Triggers>
+                                    <DataTrigger TargetType="Image"
+                                                 Binding="{Binding Source={x:Reference amountControl}, Path=IsCompact}"
+                                                 Value="True">
+                                        <Setter Property="HeightRequest" Value="14" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Image.Style>
+                    </Image>
+                </Border>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+    </CollectionView>
+</local:TimesheetControl>

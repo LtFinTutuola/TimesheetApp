@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<local:MonthlyControl xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                      xmlns:local="clr-namespace:TimesheetApp.Controls.Monthly"
+                      xmlns:controls="clr-namespace:TimesheetApp.Controls.Timesheet"
+                      xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+                      xmlns:utilities="clr-namespace:TimesheetApp.Model.Utilities"
+                      
+                      x:Class="TimesheetApp.Controls.Monthly.TimesheetsList"
+                      x:DataType="local:TimesheetsList"
+                      x:Name="TsList">
+    <Grid>
+        <ListView ItemsSource="{Binding AmountTimesheets}"
+                  BindingContext="{x:Reference TsList}"
+                  Margin="8"
+                  x:Name="tsListview">
+            <ListView.Style>
+                <Style TargetType="ListView">
+                    <Style.Triggers>
+                        <DataTrigger TargetType="ListView"
+                                     Binding="{Binding AmountTimesheets.Count}"
+                                     Value="0">
+                            <Setter Property="IsVisible" Value="False" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ListView.Style>
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="utilities:AmountTimesheet">
+                    <ViewCell>
+                        <Grid ColumnDefinitions="auto, *, auto, auto"
+                              Margin="16, 8">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="DaySelectedEventHandler" />
+                            </Grid.GestureRecognizers>
+
+                            <Border Grid.Column="0"
+                                    Style="{StaticResource RoundedBorder}"
+                                    Margin="4, 4, 8, 4">
+                                <Image Style="{StaticResource SmallImage}"
+                                       Source="../../Resources/Images/calendarday.png">
+                                    <Image.Behaviors>
+                                        <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray200}}" />
+                                    </Image.Behaviors>
+                                </Image>
+                            </Border>
+
+                            <Label Grid.Column="1"
+                                   Text="{Binding Timesheet.Today, StringFormat='{0:dddd d}'}"
+                                   Style="{StaticResource BigLabel}"
+                                   HorizontalOptions="Start"
+                                   VerticalOptions="Center"/>
+
+                            <controls:ListAmountsControl Grid.Column="2"
+                                                         VerticalOptions="Center"
+                                                         HorizontalOptions="End"
+                                                         TimeSheet="{Binding Timesheet}"/>
+
+                            <Image Grid.Column="3"
+                                   Style="{StaticResource DetailsImage}" />
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <VerticalStackLayout HorizontalOptions="Center"
+                             VerticalOptions="Center"
+                             IsVisible="{Binding Source={x:Reference tsListview}, Path=IsVisible, Converter={toolkit:InvertedBoolConverter}}">
+
+            <Image Source="../../Resources/Images/emptylist.png"
+                   HeightRequest="60">
+                <Image.Behaviors>
+                    <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray500}}" />
+                </Image.Behaviors>
+            </Image>
+
+            <Label Text="Nessuna timbratura disponibile"
+                   Style="{StaticResource BigBoldLabel}"
+                   TextColor="{StaticResource Gray400}"
+                   Margin="0, 12" />
+        </VerticalStackLayout>
+    </Grid>
+</local:MonthlyControl>

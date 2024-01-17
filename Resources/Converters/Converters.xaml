@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xaml-comp compile="true" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                    xmlns:converters="clr-namespace:TimesheetApp.Resources.Converters">
+    <converters:AmountKindDescriptionConverter x:Key="AmountKindDescriptionConverter" />
+    <converters:AmountKindIconConverter x:Key="AmountKindIconConverter" />
+    <converters:SettingsIconConverter x:Key="SettingsIconConverter" />
+    <converters:StampTypeDisplayConverter x:Key="StampTypeDisplayConverter" />
+    <converters:StampTypeIconConverter x:Key="StampTypeIconConver" />
+    <converters:WorkingDaySelectedCommand x:Key="WorkingDaySelectedCommand" />
+    <converters:CalendarButtonsConverter x:Key="CalendarButtonConverter" />
+    <converters:StringToBooleanConverter x:Key="StringToBooleanConverter" />
+    <converters:EmailTypeDisplayConverter x:Key="EmailTypeDisplayConverter" />
+</ResourceDictionary>

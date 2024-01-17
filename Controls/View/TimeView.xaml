@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<local:BaseView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:local="clr-namespace:TimesheetApp.Controls.View"
+                xmlns:controls="clr-namespace:TimesheetApp.Controls"
+                x:Class="TimesheetApp.Controls.View.TimeView"
+                x:DataType="local:TimeView"
+                x:Name="this">
+    <Grid BindingContext="{x:Reference this}">
+        <Grid.Resources>
+            <ResourceDictionary Source="ViewTemplate.xaml" />
+        </Grid.Resources>
+
+        <controls:TemplatedContentPresenter />
+
+        <Button Grid.Column="2"
+                BackgroundColor="Transparent"
+                Padding="0"
+                FontSize="24"
+                HorizontalOptions="Start"
+                TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray100}}"
+                VerticalOptions="Center"
+                Margin="8, 0"
+                FontAttributes="Bold"
+                Command="{Binding SetTimeCommand}"
+                Text="{Binding Time, StringFormat='{0:hh\\:mm}'}" />
+    </Grid>
+</local:BaseView>

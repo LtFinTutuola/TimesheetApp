@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xaml-comp compile="true" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
+
+    <Style TargetType="{x:Type Image}">
+        <Setter Property="HeightRequest" Value="22" />
+        <Setter Property="HorizontalOptions" Value="Center" />
+        <Setter Property="VerticalOptions" Value="Center" />
+    </Style>
+
+    <Style TargetType="{x:Type Image}" x:Key="SmallImage">
+        <Setter Property="HeightRequest" Value="18" />
+    </Style>
+    
+    <Style TargetType="{x:Type Image}" x:Key="DetailsImage">
+        <Setter Property="HeightRequest" Value="16" />
+        <Setter Property="Source" Value="../../Images/gotopage.png" />
+        <Setter Property="Margin" Value="8" />
+    </Style>
+
+    <Style TargetType="{x:Type Image}" x:Key="Gray300Image">
+        <Setter Property="Behaviors">
+            <Setter.Value>
+                <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray500}}" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type Image}" x:Key="Gray600Image">
+        <Setter Property="Behaviors">
+            <Setter.Value>
+                <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray200}}" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="Image" x:Key="IndicatorImage">
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal">
+                        <VisualState.Setters>
+                            <Setter Property="Opacity" Value="0.4" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Selected">
+                        <VisualState.Setters>
+                            <Setter Property="Opacity" Value="1" />
+                            <Setter Property="BackgroundColor" Value="Transparent" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+</ResourceDictionary>

@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<view:BaseContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                      xmlns:view="clr-namespace:TimesheetApp.View"
+                      xmlns:vm="clr-namespace:TimesheetApp.ViewModel.Navigation"
+                      xmlns:entities="clr-namespace:TimesheetApp.Model.Entities"
+                      xmlns:controls="clr-namespace:TimesheetApp.Controls"
+                      xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+                      
+                      x:Class="TimesheetApp.View.Navigation.WorkshiftRegistryPage"
+                      x:DataType="vm:WorkshiftRegistryViewModel"
+                      x:Name="Registry">
+
+    <Grid RowDefinitions="auto, auto, auto, *">
+        <Grid.Resources>
+            <DataTemplate x:DataType="{x:Type entities:Workshift}" x:Key="WorkshiftTemplate">
+                <Grid RowDefinitions="auto, *, auto">
+                    <Grid Grid.Row="0"
+                          ColumnDefinitions="*, auto" >
+                        
+                        <!-- Workshift description-->
+                        <HorizontalStackLayout Grid.Column="0"
+                                               Margin="0, 0, 0, 4">
+                            <Image Source="../../Resources/Images/workshiftrecap.png">
+                                <Image.Behaviors>
+                                    <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}" />
+                                </Image.Behaviors>
+                            </Image>
+                            <Label Text="{Binding Description}"
+                                   Style="{StaticResource SmallBoldLabel}"
+                                   HorizontalOptions="Start"
+                                   TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}"
+                                   Margin="5, 0" />
+                        </HorizontalStackLayout>
+
+                        <!-- IsDefault -->
+                        <Border Grid.Column="1"
+                                StrokeShape="RoundRectangle 25, 25, 25, 25"
+                                Padding="8, 2"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource Tertiary}, Dark={StaticResource Primary}}"
+                                Margin="8, -2, 2, 0"
+                                IsVisible="{Binding IsDefault}">
+                            <Label Text="DEFAULT"
+                                   FontAttributes="Bold"
+                                   FontSize="9"
+                                   TextColor="White" />
+                        </Border>
+                    </Grid>
+
+                    <Grid Grid.Row="1"
+                          ColumnDefinitions="5*, 5*"
+                          RowDefinitions="5*, 5*">
+                        <Grid.Resources>
+                            <Style TargetType="{x:Type Label}" BasedOn="{StaticResource MediumLabel}" x:Key="DefaultLabel">
+                                <Setter Property="HorizontalOptions" Value="Start" />
+                            </Style>
+
+                            <Style TargetType="{x:Type Label}" BasedOn="{StaticResource DefaultLabel}" />
+
+                            <Style TargetType="{x:Type Label}" BasedOn="{StaticResource DefaultLabel}" x:Key="PauseLabel">
+                                <Style.Triggers>
+                                    <DataTrigger TargetType="{x:Type Label}" 
+                                                 Binding="{Binding HasLunchPause}" 
+                                                 Value="False">
+                                        <Setter Property="Text" Value="--:--" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+
+                            <Style TargetType="{x:Type HorizontalStackLayout}" x:Key="LunchLayout">
+                                <Style.Triggers>
+                                    <DataTrigger TargetType="{x:Type HorizontalStackLayout}"
+                                                 Binding="{Binding HasLunchPause}"
+                                                 Value="False">
+                                        <Setter Property="Opacity" Value="0.3" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+
+                            <Style TargetType="{x:Type VerticalStackLayout}">
+                                <Setter Property="Margin" Value="6, 0" />
+                            </Style>
+                        </Grid.Resources>
+
+                        <!-- Morning enter -->
+                        <HorizontalStackLayout Grid.Row="0" Grid.Column="0" Margin="0, 4">
+                            <Image Source="../../Resources/Images/StampType/morningenter.svg" >
+                                <Image.Behaviors>
+                                    <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray100}}" />
+                                </Image.Behaviors>
+                            </Image>
+                            <VerticalStackLayout>
+                                <Label Style="{StaticResource DescriptionLabel}" 
+                                       Text="Entrata" />
+                                <Label Text="{Binding MorningEnter, StringFormat='{0:hh\\:mm}'}"/>
+                            </VerticalStackLayout>
+                        </HorizontalStackLayout>
+
+                        <!-- Afternoon exit -->
+                        <HorizontalStackLayout Grid.Row="1" Grid.Column="0" Margin="0, 4">
+                            <Image Source="../../Resources/Images/StampType/afternoonexit.svg" >
+                                <Image.Behaviors>
+                                    <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray100}}" />
+                                </Image.Behaviors>
+                            </Image>
+                            <VerticalStackLayout>
+                                <Label Style="{StaticResource DescriptionLabel}" 
+                                       Text="Uscita" />
+                                <Label Text="{Binding AfternoonExit, StringFormat='{0:hh\\:mm}'}"/>
+                            </VerticalStackLayout>
+                        </HorizontalStackLayout>
+
+                        <!-- Start lunch pause -->
+                        <HorizontalStackLayout Grid.Row="0" Grid.Column="1" Margin="0, 4" Style="{StaticResource LunchLayout}">
+                            <Image Source="../../Resources/Images/StampType/startlunchpause.svg" >
+                                <Image.Behaviors>
+                                    <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray100}}" />
+                                </Image.Behaviors>
+                            </Image>
+                            <VerticalStackLayout>
+                                <Label Style="{StaticResource DescriptionLabel}" 
+                                       Text="Inizio pausa pranzo" />
+                                <Label Style="{StaticResource PauseLabel}" 
+                                       Text="{Binding LunchPauseStarting, StringFormat='{0:hh\\:mm}'}" />
+                            </VerticalStackLayout>
+                        </HorizontalStackLayout>
+
+                        <!-- End lunch pause -->
+                        <HorizontalStackLayout Grid.Row="1" Grid.Column="1" Margin="0, 4" Style="{StaticResource LunchLayout}">
+                            <Image Source="../../Resources/Images/StampType/endlunchpause.svg" >
+                                <Image.Behaviors>
+                                    <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray100}}" />
+                                </Image.Behaviors>
+                            </Image>
+                            <VerticalStackLayout>
+                                <Label Style="{StaticResource DescriptionLabel}" Text="Fine pausa pranzo" />
+                                <Label Style="{StaticResource PauseLabel}" 
+                                       Text="{Binding LunchPauseEnding, StringFormat='{0:hh\\:mm}'}" />
+                            </VerticalStackLayout>
+                        </HorizontalStackLayout>
+                    </Grid>
+                    
+                    <!-- Update / delete -->
+                    <Button Grid.Row="2"
+                            Margin="0"
+                            Text="Modifica"
+                            FontAttributes="Bold"
+                            TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray100}}"
+                            BackgroundColor="Transparent" 
+                            Command="{Binding Source={x:Reference Registry}, Path=BindingContext.UpdateDeleteWorkshiftCommand}"
+                            CommandParameter="{Binding .}"/>
+                </Grid>
+            </DataTemplate>
+
+            <Style x:Key="HideOnWorkshiftAbsence" TargetType="{x:Type VisualElement}">
+                <Setter Property="IsVisible" Value="True" />
+                <Style.Triggers>
+                    <DataTrigger TargetType="{x:Type VisualElement}" 
+                                 Binding="{Binding CurrentWorkshift.ID}" 
+                                 Value="0">
+                        <Setter Property="IsVisible" Value="False" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style x:Key="ShowOnWorkshiftAbsence" TargetType="{x:Type VisualElement}">
+                <Setter Property="IsVisible" Value="False" />
+                <Style.Triggers>
+                    <MultiTrigger TargetType="{x:Type VisualElement}">
+                        <MultiTrigger.Conditions>
+                            <BindingCondition Binding="{Binding CurrentWorkshift.ID}" Value="0" />
+                            <BindingCondition Binding="{Binding Workshifts.Count}" Value="0" />
+                        </MultiTrigger.Conditions>
+                        <Setter Property="IsVisible" Value="True" />
+                    </MultiTrigger>
+                </Style.Triggers>
+            </Style>
+        </Grid.Resources>
+
+        <!-- Header -->
+        <Border Style="{StaticResource HeaderBorder}">
+            <Grid ColumnDefinitions="auto, *, auto"
+                  Margin="12, 0">
+                <ImageButton Style="{StaticResource BackButton}"/>
+
+                <Label Grid.Column="1"
+                       Text="Gestisci turni"
+                       Style="{StaticResource TitleLabel}"/>
+
+                <Grid Grid.Column="2"
+                      VerticalOptions="Center">
+                    <ImageButton Command="{Binding CreateNewWorkshiftCommand}"
+                                 Source="../../Resources/Images/plus.svg"
+                                 Style="{StaticResource RightHeaderButton}"/>
+
+                    <!-- Ellipse to indicate if current workshift is missing -->
+                    <controls:AlertEllipse Alert="{Binding CurrentWorkshift.ID}"
+                                           Margin="0, -2, 8, 0" />
+                </Grid>                
+            </Grid>
+        </Border>
+
+        <!-- Current workshift-->
+        <Border Grid.Row="1"
+                BackgroundColor="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource Gray700}}"
+                Margin="12, -20, 12, 12"
+                Padding="10, 8"
+                Style="{StaticResource HideOnWorkshiftAbsence}">
+            <controls:TemplatedContentPresenter Data="{Binding CurrentWorkshift}"
+                                                DataTemplate="{StaticResource WorkshiftTemplate}" />
+        </Border>
+
+        <StackLayout Grid.Row="2"
+                     HeightRequest="1"
+                     BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                     Margin="24, 4, 24, 8"
+                     Style="{StaticResource HideOnWorkshiftAbsence}" />
+
+        <!-- Other workshifts -->
+        <ListView Grid.Row="3"
+                  ItemsSource="{Binding Workshifts}">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="{x:Type entities:Workshift}">
+                    <ViewCell>
+                        <Border BackgroundColor="{AppThemeBinding Light={StaticResource Gray25}, Dark={StaticResource Gray950}}"
+                                Margin="12, 8, 12, 0"
+                                Padding="10, 8">
+                            <controls:TemplatedContentPresenter Data="{Binding .}"
+                                                                DataTemplate="{StaticResource WorkshiftTemplate}">
+                                <controls:TemplatedContentPresenter.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={x:Reference Registry}, Path=BindingContext.AssignWorkshiftCommand}"
+                                                          CommandParameter="{Binding .}" />
+                                </controls:TemplatedContentPresenter.GestureRecognizers>
+                            </controls:TemplatedContentPresenter>
+                        </Border>                                
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <!-- Placeholder to show if there aren't registered workshifts -->
+        <VerticalStackLayout Grid.Row="3"
+                             HorizontalOptions="Center"
+                             VerticalOptions="Center"
+                             Style="{StaticResource ShowOnWorkshiftAbsence}">
+
+            <Image Source="../../Resources/Images/emptylist.png"
+                   HeightRequest="60">
+                <Image.Behaviors>
+                    <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray500}}" />
+                </Image.Behaviors>
+            </Image>
+
+            <Label Text="Nessuna timbratura disponibile"
+                   Style="{StaticResource BigBoldLabel}"
+                   TextColor="{StaticResource Gray400}"
+                   Margin="0, 12" />
+        </VerticalStackLayout>
+    </Grid>
+</view:BaseContentPage>

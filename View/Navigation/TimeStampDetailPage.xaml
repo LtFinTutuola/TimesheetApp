@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<view:BaseContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                      xmlns:view="clr-namespace:TimesheetApp.View"
+                      xmlns:vm="clr-namespace:TimesheetApp.ViewModel.Navigation"
+                      xmlns:utilities="clr-namespace:TimesheetApp.Model.Utilities"
+                      xmlns:ts="clr-namespace:TimesheetApp.Controls.Timesheet"
+                      xmlns:entities="clr-namespace:TimesheetApp.Model.Entities"
+                      xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+                      xmlns:behaviors="clr-namespace:TimesheetApp.Resources.Behaviors"
+                      
+                      x:Class="TimesheetApp.View.Navigation.TimeStampDetailPage"
+                      x:DataType="vm:TimeStampDetailViewModel"
+                      x:Name="detail">
+    <Grid RowDefinitions="auto, 4*, auto, 6*">        
+        <!-- Header -->
+        <Border Style="{StaticResource HeaderBorder}">
+            <Grid ColumnDefinitions="auto, *, auto"
+                  Margin="12, 0">
+                <ImageButton Style="{StaticResource BackButton}" />
+
+                <Label Grid.Column="1"
+                       Text="Dettaglio timbratura"
+                       Style="{StaticResource TitleLabel}" />
+
+                <ImageButton Command="{Binding UpdateTimeStampCommand}"
+                             Source="../../Resources/Images/edit.svg"
+                             Style="{StaticResource RightHeaderButton}" />
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="1"
+                Style="{StaticResource TopPageBorder}"
+                Margin="12, -20, 12, 0"
+                Padding="12">
+            <Grid RowDefinitions="8*, 2*" >
+                <!-- Timestamp details -->
+                <VerticalStackLayout Grid.Row="0"
+                                     HorizontalOptions="Center"
+                                     VerticalOptions="Center"
+                                     Margin="0, -6, 0, 0">
+                    <Label Text="{Binding TimeStamp.StampType, Converter={StaticResource StampTypeDisplayConverter}}"
+                           Style="{StaticResource BigBoldLabel}"
+                           TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"/>
+
+                    <Label Text="{Binding TimeStamp.Stamp, StringFormat='{0:HH:mm}'}"
+                           FontSize="72"
+                           TextColor="{AppThemeBinding Light={StaticResource Tertiary}, Dark={StaticResource White}}"
+                           Margin="0, -14, 0, -8"/>
+
+                    <Label Text="{Binding TimeStamp.Stamp, StringFormat='{0:ddd d MMMM}'}"
+                           FontSize="22"
+                           TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Secondary}}" />
+                </VerticalStackLayout>
+
+                <!-- Timestamp amounts -->
+                <CollectionView Grid.Row="1"
+                                ItemsSource="{Binding TimestampInfo}"
+                                ItemsLayout="HorizontalList"
+                                HorizontalOptions="Center" >
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="{x:Type utilities:AmountsDictionary}">
+                            <HorizontalStackLayout Margin="0, 0, 12, 0">
+                                <Border Style="{StaticResource RoundedBorder}"
+                                        HeightRequest="30"
+                                        WidthRequest="30">
+                                    <Image Source="{Binding AmountKind, Converter={StaticResource AmountKindIconConverter}}">
+                                        <Image.Style>
+                                            <Style TargetType="{x:Type Image}" BasedOn="{StaticResource SmallImage}">
+                                                <Setter Property="behaviors:TintIconBehavior.TintColor" Value="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray100}}" />
+                                                <Setter Property="behaviors:TintIconBehavior.AttachBehavior" Value="False" />
+                                                <Style.Triggers>
+                                                    <DataTrigger TargetType="{x:Type Image}"
+                                                                 Binding="{Binding AmountKind}"
+                                                                 Value="{x:Static entities:AmountKind.Placeholder}">
+                                                        <Setter Property="behaviors:TintIconBehavior.AttachBehavior" Value="True" />
+                                                    </DataTrigger>
+                                                    <DataTrigger TargetType="{x:Type Image}"
+                                                                 Binding="{Binding AmountKind}"
+                                                                 Value="{x:Static entities:AmountKind.NoAmount}">
+                                                        <Setter Property="behaviors:TintIconBehavior.AttachBehavior" Value="True" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Image.Style>
+                                    </Image>
+                                </Border>
+                                <VerticalStackLayout Margin="4, 4, 0, 0">
+                                    <Label Text="{Binding AmountKind, Converter={StaticResource AmountKindDescriptionConverter}}"
+                                           Style="{StaticResource DescriptionLabel}"
+                                           FontSize="12"/>
+
+                                    <Label Text="{Binding Amount}"
+                                           HorizontalOptions="Start">
+                                        <Label.Style>
+                                            <Style TargetType="{x:Type Label}" BasedOn="{StaticResource MediumLabel}">
+                                                <Style.Triggers>
+                                                    <DataTrigger TargetType="{x:Type Label}"
+                                                                 Binding="{Binding Amount}"
+                                                                 Value="00:00">
+                                                        <Setter Property="Text" Value="--:--" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Label.Style>
+                                    </Label>
+                                </VerticalStackLayout>
+                            </HorizontalStackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>                    
+                </CollectionView>
+            </Grid>
+        </Border>
+
+        <HorizontalStackLayout Grid.Row="2"
+                               Margin="18, 8">
+            <Label Text="{Binding TimeStamp.StampType, Converter={StaticResource StampTypeDisplayConverter}}"
+                   Style="{StaticResource ListHeaderLabel}"
+                   Margin="0, 0, 4, 0"/>
+
+            <Label Text="{Binding TimeStamp.Stamp, StringFormat='{0:- MMMM yyyy}'}"
+                   Style="{StaticResource ListHeaderLabel}"/>
+        </HorizontalStackLayout>
+
+        <!-- Other timestamps of the same type in the same month -->
+        <ListView Grid.Row="3"
+                  ItemsSource="{Binding TimeStamps}">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="entities:TimeStamp">
+                    <ViewCell>
+                        <Grid ColumnDefinitions="auto, auto, *, auto"
+                              Margin="18, 4" >
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={x:Reference detail}, Path=BindingContext.ChangeTimestampDetailCommand}"
+                                                      CommandParameter="{Binding .}" />
+                            </Grid.GestureRecognizers>
+                            <Border Grid.Column="0"
+                                    Style="{StaticResource RoundedBorder}"
+                                    Margin="0, 4, 8, 4">
+                                <Image Style="{StaticResource SmallImage}"
+                                       Source="../../Resources/Images/clock.png">
+                                    <Image.Behaviors>
+                                        <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray100}}" />
+                                    </Image.Behaviors>
+                                </Image>
+                            </Border>
+
+                            <VerticalStackLayout Grid.Column="1"
+                                                 HorizontalOptions="Start">
+                                <Label Text="{Binding Stamp, StringFormat='{0:dddd d}'}"
+                                       Style="{StaticResource InfoLabel}"
+                                       TextColor="{StaticResource Gray400}"
+                                       Margin="0, 2, 0, 0"/>
+
+                                <Label Text="{Binding Stamp, StringFormat='{0:HH:mm}'}"
+                                       Style="{StaticResource BigLabel}"
+                                       HorizontalOptions="Start"
+                                       Margin="0, -2, 0, 0"/>
+                            </VerticalStackLayout>
+
+                            <!-- Timestamp amounts -->
+                            <ts:ListAmountsControl Grid.Column="2"
+                                                   TimeStamp="{Binding .}"
+                                                   HorizontalOptions="End"
+                                                   VerticalOptions="Center" />
+
+                            <Image Grid.Column="3"
+                                   Style="{StaticResource DetailsImage}" />
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</view:BaseContentPage>

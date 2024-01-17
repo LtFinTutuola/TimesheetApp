@@ -1,0 +1,223 @@
+<view:BaseContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                      xmlns:view="clr-namespace:TimesheetApp.View"
+                      xmlns:vm="clr-namespace:TimesheetApp.ViewModel.Page"
+                      xmlns:ts="clr-namespace:TimesheetApp.Controls.Timesheet"
+                      xmlns:entities="clr-namespace:TimesheetApp.Model.Entities"
+                      xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+                      xmlns:behaviors="clr-namespace:TimesheetApp.Resources.Behaviors"
+                      xmlns:controls="clr-namespace:TimesheetApp.Controls"
+                      xmlns:utilities="clr-namespace:TimesheetApp.Model.Utilities"
+                      xmlns:mct="clr-namespace:CommunityToolkit.Maui.Behaviors;assembly=CommunityToolkit.Maui"
+                      
+                      x:DataType="vm:HomePageViewModel"
+                      x:Class="TimesheetApp.View.Page.HomePage"
+                      x:Name="home">
+    <view:BaseContentPage.Style>
+        <Style TargetType="{x:Type Page}">            
+            <!-- Behavior to switch status bar color accordingly to header border background, based on current theme -->
+            <Setter Property="Behaviors">
+                <Setter.Value>
+                    <mct:StatusBarBehavior StatusBarColor="{AppThemeBinding Light={StaticResource Tertiary}, Dark={StaticResource Gray900}}" />
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </view:BaseContentPage.Style>
+    <Grid RowDefinitions="auto, 5.25*, 4.75*, auto">
+        <!-- Header -->
+        <Border Style="{StaticResource HeaderBorder}">
+            <Grid ColumnDefinitions="auto, *, auto"
+                  Margin="12, 0">
+                <DatePicker x:Name="DatePicker"
+                            IsVisible="False"
+                            Date="{Binding TimeSheet.Today}">
+                    <DatePicker.Behaviors>
+                        <toolkit:EventToCommandBehavior EventName="DateSelected"
+                                                        Command="{Binding ChangeDailyTimesheetCommand}"
+                                                        CommandParameter="{Binding Source={x:Reference DatePicker}, Path=Date}" />
+                    </DatePicker.Behaviors>
+                </DatePicker>
+
+                <Grid Grid.Column="0"
+                      VerticalOptions="Center">
+                    
+                    <!-- Fake DatePicker button -->
+                    <ImageButton Style="{StaticResource LeftHeaderButton}"
+                                 Command="{Binding ForceDatepickerExecutionCommand}"
+                                 CommandParameter="{Binding Source={x:Reference DatePicker}}"
+                                 Source="../../Resources/Images/calendarday.png" />
+
+                    <!-- Ellipse to indicate if current timesheet is overtime day -->
+                    <controls:AlertEllipse Alert="{Binding TimeSheet.IsOvertimeDay}"
+                                           Margin="0, -2, 8, 0" 
+                                           Fill="#02A117"/>
+                </Grid>                
+
+                <!-- Timesheet date -->
+                <HorizontalStackLayout Grid.Column="1"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center">
+                    <Label Text="{Binding TimeSheet.Today, StringFormat='{0:ddd d}'}"
+                           Style="{StaticResource TitleLabel}"/>
+
+                    <Label Text="{Binding TimeSheet.Today, StringFormat='{0:MMMM}'}"
+                           Style="{StaticResource TitleLabel}"
+                           Margin="6, -4, 0, 0"/>
+                </HorizontalStackLayout>
+
+                <!-- Show options popup -->
+                <Grid Grid.Column="2"
+                      VerticalOptions="Center">
+                    <ImageButton Style="{StaticResource RightHeaderButton}"
+                                 Command="{Binding ShowOptionsPopupCommand}"
+                                 Source="../../Resources/Images/menu.png"/>
+
+                    <!-- Ellipse to indicate if current timesheet's workshift is missing -->
+                    <controls:AlertEllipse Alert="{Binding TimeSheet.WorkshiftID}"
+                                           Margin="0, -2, 8, 0" />
+                </Grid>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="1"
+                Style="{StaticResource TopPageBorder}"
+                Margin="12, -20, 12, 0"
+                x:Name="TimerBox"
+                Padding="8, 8, 8, 0">
+            <Grid RowDefinitions="*, auto">
+                <CarouselView Grid.Row="0"
+                              Loop="False"
+                              Margin="4"
+                              IndicatorView="IndicatorView">
+                    <CarouselView.Resources>
+                        <ResourceDictionary Source="../../Resources/Templates/Amounts/AmountsControlTemplates.xaml" />
+                    </CarouselView.Resources>
+                    <CarouselView.ItemsSource>
+                        <x:Array Type="{x:Type ContentView}">
+                            <!-- Timesheet progress control -->
+                            <ts:RadialProgressBarControl TimeSheet="{Binding Source={RelativeSource AncestorType={x:Type CarouselView}}, Path=BindingContext.TimeSheet}"
+                                                         TimeStamps="{Binding Source={RelativeSource AncestorType={x:Type CarouselView}}, Path=BindingContext.TimeStamps}" />
+                            <!-- Timesheet amounts control -->
+                            <ts:ExtendedAmountsControl TimeSheet="{Binding Source={RelativeSource AncestorType={x:Type CarouselView}}, Path=BindingContext.TimeSheet}" />
+                        </x:Array>
+                    </CarouselView.ItemsSource>
+                    <CarouselView.ItemTemplate>
+                        <DataTemplate >
+                            <ContentView Content="{Binding }" />
+                        </DataTemplate>
+                    </CarouselView.ItemTemplate>
+                </CarouselView>
+                <IndicatorView Grid.Row="1"
+                               x:Name="IndicatorView"
+                               IndicatorColor="{AppThemeBinding Light={StaticResource Gray50}, Dark={StaticResource Gray900}}"
+                               SelectedIndicatorColor="{StaticResource Primary}"
+                               HorizontalOptions="Center"
+                               Margin="8"/>
+            </Grid>
+        </Border>
+        
+        <VerticalStackLayout Grid.Row="2">
+            <Border Margin="12, 12, 12, 0"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray600}}">
+                <!-- Workaround to solve delay issue if binding directly converter value to isVisible-->
+                <Border.Style>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="IsVisible" Value="False" />
+                        <Style.Triggers>
+                            <DataTrigger TargetType="{x:Type Border}"
+                                         Binding="{Binding TimeSheet.Notes, Converter={StaticResource StringToBooleanConverter}}"
+                                         Value="True">
+                                <Setter Property="IsVisible" Value="True" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <Grid ColumnDefinitions="auto, *"
+                      Margin="8">
+                    <Image Source="../..Resources/Images/notes.png"
+                           Grid.Column="0"
+                           VerticalOptions="Center"
+                           Margin="4">
+                        <Image.Behaviors>
+                            <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray200}}" />
+                        </Image.Behaviors>
+                    </Image>
+
+                    <Label Grid.Column="1"
+                           Margin="4, 0"
+                           Style="{StaticResource SmallLabel}"
+                           LineBreakMode="WordWrap"
+                           HorizontalOptions="Start"
+                           TextColor="{AppThemeBinding Light={StaticResource Gray950}, Dark={StaticResource Gray200}}"
+                           Text="{Binding TimeSheet.Notes}" />
+                </Grid>
+            </Border>
+
+            <Label Text="Elenco timbrature"
+                   Style="{StaticResource ListHeaderLabel}"
+                   Margin="18, 12, 18, 8"/>
+
+            <!-- Timestamps -->
+            <ListView ItemsSource="{Binding TimeStamps}">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="{x:Type entities:TimeStamp}">
+                        <ViewCell>
+                            <Grid ColumnDefinitions="auto, *, auto, auto"
+                                  Margin="16, 0, 16, 8">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={x:Reference home}, Path=BindingContext.ShowTimeStampDetailsCommand}"
+                                                          CommandParameter="{Binding .}" />
+                                </Grid.GestureRecognizers>
+                                <Border Grid.Column="0"
+                                        Style="{StaticResource RoundedBorder}"
+                                        Margin="4, 4, 8, 4">
+                                    <Image Source="{Binding StampType, Converter={StaticResource StampTypeIconConver}}" >
+                                        <Image.Behaviors>
+                                            <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray100}}" />
+                                        </Image.Behaviors>
+                                    </Image>
+                                </Border>
+
+                                <VerticalStackLayout Grid.Column="1" 
+                                                     VerticalOptions="Center"
+                                                     Margin="2, 0" >
+                                    <Label Text="{Binding StampType, Converter={StaticResource StampTypeDisplayConverter}}"
+                                           Style="{StaticResource DescriptionLabel}"/>
+
+                                    <Label Text="{Binding Stamp, StringFormat='{0:HH:mm}'}"
+                                           FontSize="20"
+                                           HorizontalOptions="Start"
+                                           Margin="0, -2, 0, 0"/>
+                                </VerticalStackLayout>
+                                
+                                <!-- Timestamp amounts -->
+                                <ts:ListAmountsControl Grid.Column="2"
+                                                       VerticalOptions="Center"
+                                                       HorizontalOptions="End"
+                                                       TimeStamp="{Binding }"
+                                                       TimeSheet="{Binding Source={x:Reference home}, Path=BindingContext.TimeSheet}"/>
+
+                                <Image Grid.Column="3"
+                                       Style="{StaticResource DetailsImage}">
+                                    <Image.Behaviors>
+                                        <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray100}}" />
+                                    </Image.Behaviors>
+                                </Image>
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </VerticalStackLayout>
+
+        <!-- Add / add directly timestamp button-->
+        <Button Grid.Row="3" 
+                Command="{Binding AddNewTimeStampCommand}"
+                Text="Timbra" 
+                Style="{StaticResource MainButton}">
+            <Button.Behaviors>
+                <behaviors:LongPressBehavior Command="{Binding AddDirectlyNewTimeStampCommand}" />
+            </Button.Behaviors>
+        </Button>
+    </Grid>
+</view:BaseContentPage>

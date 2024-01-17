@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<view:BaseContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                      xmlns:view="clr-namespace:TimesheetApp.View"
+                      xmlns:vm="clr-namespace:TimesheetApp.ViewModel.Navigation"
+                      xmlns:controls="clr-namespace:TimesheetApp.Controls.View"
+                      
+                      x:Class="TimesheetApp.View.Navigation.TimesheetNotesPage"
+                      x:DataType="vm:TimesheetNotesViewModel">
+    <Grid RowDefinitions="auto, *, auto">        
+        <!-- Header -->
+        <Border Style="{StaticResource HeaderBorder}">
+            <Grid ColumnDefinitions="auto, *, auto"
+                  Margin="12, 0">
+                <ImageButton Style="{StaticResource BackButton}" />
+
+                <Label Grid.Column="1"
+                       Text="Note giornata"
+                       Style="{StaticResource TitleLabel}" />
+
+                <!-- Reset notes -->
+                <ImageButton Command="{Binding ResetNotesCommand}"
+                             Source="../../Resources/Images/reset.png"
+                             Style="{StaticResource RightHeaderButton}" />
+            </Grid>
+        </Border>
+
+        <!-- Notes text -->
+        <Border Grid.Row="1"
+                VerticalOptions="Start"
+                HorizontalOptions="Fill"
+                Padding="8"
+                Margin="12">
+            <controls:TextView Text="{Binding Notes, Mode=TwoWay}"
+                               Description="Note"
+                               MaxLenght="250"
+                               IsMultiLine="True"
+                               ShowLenght="True"/>
+        </Border>
+
+        <!-- Save / update -->
+        <Button Grid.Row="2"
+                Style="{StaticResource MainButton}"
+                Text="Salva"
+                Command="{Binding SaveNotesCommand}" />
+    </Grid>
+</view:BaseContentPage>

@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<local:SelectView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                  xmlns:local="clr-namespace:TimesheetApp.Controls.View"
+                  xmlns:controls="clr-namespace:TimesheetApp.Controls"
+                  
+                  x:Class="TimesheetApp.Controls.View.ThemeView"
+                  x:DataType="local:ThemeView"
+                  x:Name="this">
+    <Border BindingContext="{x:Reference this}"
+            BackgroundColor="{AppThemeBinding Light={StaticResource Gray50}, Dark={StaticResource Gray950}}"
+            Padding="16, 0"
+            HeightRequest="300">
+        <Border.Style>
+            <Style TargetType="{x:Type Border}">
+                <Style.Triggers>
+                    <DataTrigger TargetType="{x:Type Border}"
+                                 Binding="{Binding Selected}"
+                                 Value="True">
+                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource Gray700}}" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Border.Style>
+        <Border.GestureRecognizers>
+            <TapGestureRecognizer Tapped="SelectViewTapped" />
+        </Border.GestureRecognizers>
+        <Grid RowDefinitions="auto, *, auto">
+            <Label Grid.Row="0"
+                   Style="{StaticResource MediumBoldLabel}"
+                   Text="{Binding Description}" 
+                   Margin="12"/>
+
+            <Border Grid.Row="1"
+                    Margin="8"
+                    StrokeShape="RoundRectangle 10, 10, 10, 10"
+                    HeightRequest="216"
+                    WidthRequest="117">
+                <Border.Style>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="BackgroundColor" Value="{StaticResource White}" />
+                        <Style.Triggers>
+                            <DataTrigger TargetType="{x:Type Border}"
+                                         Binding="{Binding Theme}"
+                                         Value="False">
+                                <Setter Property="BackgroundColor" Value="{StaticResource Black}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <Grid RowDefinitions="auto, 5.25*, 4.75*, auto" >
+                    <Border Grid.Row="0"
+                            StrokeShape="RoundRectangle 0, 0, 7.5, 7.5"
+                            HeightRequest="25"
+                            HorizontalOptions="Fill">
+                        <Border.Style>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="BackgroundColor" Value="{StaticResource Tertiary}" />
+                                <Style.Triggers>
+                                    <DataTrigger TargetType="{x:Type Border}"
+                                                 Binding="{Binding Theme}"
+                                                 Value="False">
+                                        <Setter Property="BackgroundColor" Value="{StaticResource Gray900}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+
+                        <StackLayout Margin="0, -4, 0, 0"
+                                     HeightRequest="3"
+                                     WidthRequest="30"
+                                     HorizontalOptions="Center"
+                                     BackgroundColor="{StaticResource White}" />
+                    </Border>
+
+                    <Border Grid.Row="1"
+                            HorizontalOptions="Center"
+                            Margin="8, -8, 8, 8">
+                        <Border.Style>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="BackgroundColor" Value="{StaticResource Secondary}" />
+                                <Style.Triggers>
+                                    <DataTrigger TargetType="{x:Type Border}"
+                                         Binding="{Binding Theme}"
+                                         Value="False">
+                                        <Setter Property="BackgroundColor" Value="{StaticResource Gray700}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <Grid>
+                            <Ellipse StrokeThickness="5.5"
+                                     HeightRequest="75"
+                                     WidthRequest="75"
+                                     Stroke="{StaticResource Primary}" />
+
+                            <VerticalStackLayout HorizontalOptions="Center"
+                                                 VerticalOptions="Center">
+
+                                <StackLayout Margin="0, 2"
+                                             HeightRequest="10"
+                                             WidthRequest="50"
+                                             HorizontalOptions="Center">
+                                    <StackLayout.Style>
+                                        <Style TargetType="{x:Type StackLayout}">
+                                            <Setter Property="BackgroundColor" Value="{StaticResource Tertiary}" />
+                                            <Style.Triggers>
+                                                <DataTrigger TargetType="{x:Type StackLayout}"
+                                                             Binding="{Binding Theme}"
+                                                             Value="False">
+                                                    <Setter Property="BackgroundColor" Value="{StaticResource White}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </StackLayout.Style>
+                                </StackLayout>
+
+                                <StackLayout Margin="0, 2"
+                                             HeightRequest="3"
+                                             WidthRequest="20"
+                                             HorizontalOptions="Center">
+                                    <StackLayout.Style>
+                                        <Style TargetType="{x:Type StackLayout}">
+                                            <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+                                            <Style.Triggers>
+                                                <DataTrigger TargetType="{x:Type StackLayout}"
+                                                             Binding="{Binding Theme}"
+                                                             Value="False">
+                                                    <Setter Property="BackgroundColor" Value="{StaticResource Secondary}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </StackLayout.Style>
+                                </StackLayout>
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Border>
+
+                    <StackLayout Grid.Row="2"
+                                 Margin="14, -2, 0, 0"
+                                 HeightRequest="3"
+                                 WidthRequest="30"
+                                 HorizontalOptions="Start"
+                                 VerticalOptions="Start">
+                        <StackLayout.Style>
+                            <Style TargetType="{x:Type StackLayout}">
+                                <Setter Property="BackgroundColor" Value="{StaticResource Gray500}" />
+                                <Style.Triggers>
+                                    <DataTrigger TargetType="{x:Type StackLayout}"
+                                                             Binding="{Binding Theme}"
+                                                             Value="False">
+                                        <Setter Property="BackgroundColor" Value="{StaticResource gray200}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackLayout.Style>
+                    </StackLayout>
+
+                    <Border Grid.Row="3"
+                            Margin="4"
+                            BackgroundColor="{StaticResource Primary}"
+                            HorizontalOptions="Fill"
+                            Padding="4"
+                            StrokeShape="RoundRectangle 3.5, 3.5, 3.5, 3.5">
+                        <StackLayout HeightRequest="1"
+                                     WidthRequest="20"
+                                     HorizontalOptions="Center"
+                                     BackgroundColor="{StaticResource White}" />
+                    </Border>
+                </Grid>
+            </Border>
+
+            <Border Grid.Row="2"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    StrokeShape="RoundRectangle 50, 50, 50, 50"
+                    HeightRequest="15"
+                    WidthRequest="15"
+                    Stroke="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray600}}"
+                    Margin="12">
+                <Border.Style>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+                        <Style.Triggers>
+                            <DataTrigger TargetType="{x:Type Border}"
+                                         Binding="{Binding Selected}"
+                                         Value="False">
+                                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray50}, Dark={StaticResource Gray950}}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+            </Border>
+        </Grid>
+    </Border>
+</local:SelectView>

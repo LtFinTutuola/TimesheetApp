@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               xmlns:behaviors="clr-namespace:TimesheetApp.Resources.Behaviors"
+               xmlns:capt="clr-namespace:TimesheetApp.Model.Context"
+               xmlns:controls="clr-namespace:TimesheetApp.Controls"
+               
+               x:Class="TimesheetApp.Popups.OptionsPopup">
+    <VerticalStackLayout Padding="16"
+                         BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray950}}">
+        <VerticalStackLayout.Resources>
+            <Style TargetType="{x:Type Image}">
+                <Setter Property="Margin" Value="8, 0" />
+                <Setter Property="behaviors:TintIconBehavior.TintColor" Value="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray500}}" />
+                <Setter Property="behaviors:TintIconBehavior.AttachBehavior" Value="True" />
+            </Style>
+
+            <Style TargetType="{x:Type VerticalStackLayout}" x:Key="optionsLayout">
+                <Setter Property="Margin" Value="8, 0, 8, 4" />
+                <Setter Property="WidthRequest" Value="200" />
+            </Style>
+
+        </VerticalStackLayout.Resources>
+        
+        <HorizontalStackLayout >
+            <HorizontalStackLayout.GestureRecognizers>
+                <TapGestureRecognizer Tapped="WorkshiftLayoutTap" />
+            </HorizontalStackLayout.GestureRecognizers>
+            <Grid HorizontalOptions="Center"
+                  VerticalOptions="Center" >
+                <Image Source="../../Resources/Images/workshift.png" />
+                <controls:AlertEllipse x:Name="workshiftAlert"
+                                       Margin="0, -2, 4, 0"/>
+            </Grid>
+
+            <VerticalStackLayout Style="{StaticResource optionsLayout}">
+                <Label Text="Cambia orario"
+                       HorizontalOptions="Start"
+                       Style="{StaticResource MediumBoldLabel}"/>
+
+                <Label Style="{StaticResource InfoLabel}"
+                       Text="{x:Static capt:Captions.WorkshiftSetInfo}" />
+            </VerticalStackLayout>
+        </HorizontalStackLayout>
+
+        <StackLayout Margin="4, 8, 4, 4"/>
+
+        <HorizontalStackLayout>
+            <HorizontalStackLayout.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OvertimeLayoutTap" />
+            </HorizontalStackLayout.GestureRecognizers>
+            <Image Source="../../Resources/Images/Amounts/overtime.png" />
+
+            <VerticalStackLayout Style="{StaticResource optionsLayout}">
+                <Label x:Name="OvertimeLabel"
+                       HorizontalOptions="Start"
+                       Style="{StaticResource MediumBoldLabel}"/>
+
+                <Label Style="{StaticResource InfoLabel}"
+                       x:Name="OvertimeInfoLabel" />
+            </VerticalStackLayout>
+        </HorizontalStackLayout>
+
+        <StackLayout Margin="4, 8, 4, 4"/>
+
+        <HorizontalStackLayout>
+            <HorizontalStackLayout.GestureRecognizers>
+                <TapGestureRecognizer Tapped="NotesLayoutTap" />
+            </HorizontalStackLayout.GestureRecognizers>
+            <Image Source="../../Resources/Images/notes.png" />
+
+            <VerticalStackLayout Style="{StaticResource optionsLayout}">
+                <Label Text="Note"
+                       HorizontalOptions="Start"
+                       Style="{StaticResource MediumBoldLabel}"/>
+
+                <Label Style="{StaticResource InfoLabel}"
+                       Text="{x:Static capt:Captions.TimesheetNotesInfo}" />
+            </VerticalStackLayout>
+        </HorizontalStackLayout>
+
+        <StackLayout Margin="4, 8, 4, 4"/>
+
+        <HorizontalStackLayout x:Name="deleteLayout">
+            <HorizontalStackLayout.GestureRecognizers>
+                <TapGestureRecognizer Tapped="DeleteLayoutTap" />
+            </HorizontalStackLayout.GestureRecognizers>
+            <Image Source="../../Resources/Images/delete.png" />
+
+            <VerticalStackLayout Style="{StaticResource optionsLayout}">
+                <Label Text="Elimina"
+                       HorizontalOptions="Start"
+                       Style="{StaticResource MediumBoldLabel}"/>
+
+                <Label Style="{StaticResource InfoLabel}"
+                       Text="{x:Static capt:Captions.TimesheetInfoDelete}" />
+            </VerticalStackLayout>
+        </HorizontalStackLayout>
+    </VerticalStackLayout>
+</toolkit:Popup>

@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<?xaml-comp compile="true" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                    xmlns:entities="clr-namespace:TimesheetApp.Model.Entities"
+                    xmlns:view="clr-namespace:TimesheetApp.Controls.View"
+                    xmlns:capt="clr-namespace:TimesheetApp.Model.Context"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                    xmlns:vm="clr-namespace:TimesheetApp.ViewModel.Navigation"
+                    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+                    xmlns:utilities="clr-namespace:TimesheetApp.Model.Utilities">
+
+    <!-- Overtime settings -->
+    <DataTemplate x:DataType="{x:Type entities:Settings}" x:Key="OvertimeTemplate">
+        <VerticalStackLayout Margin="12">
+            <!-- Morning overtime -->
+            <view:SwitchView Description="Straordinari mattina"
+                             Switch="{Binding OvertimeOnEarlyMorningEnter}"
+                             Info="{x:Static capt:Captions.MorningOvertimeInfo}"/>
+            <StackLayout />
+            <!-- Afternoon overtime -->
+            <view:SwitchView Description="Straordinari sera"
+                             Switch="{Binding OvertimeOnLateAfternoonExit}"
+                             Info="{x:Static capt:Captions.AfternoonOvertimeInfo}"/>
+            <StackLayout />
+            <!-- Minumum overtime -->
+            <view:TimeView Description="Straordinario minimo"
+                           Time="{Binding MinOvertimeCounted}"
+                           Info="{x:Static capt:Captions.MinOvertimeAmountInfo}" />
+        </VerticalStackLayout>
+    </DataTemplate>
+
+    <!-- Hourly bank settings -->
+    <DataTemplate x:DataType="{x:Type entities:Settings}" x:Key="HourlyBankTemplate">
+        <VerticalStackLayout Margin="12">
+            <!-- Morning hourly bank -->
+            <view:SwitchView Description="Banca ore mattina"
+                             Switch="{Binding HourlyBankOnEarlyMorningEnter}"
+                             Info="{x:Static capt:Captions.MorningHourlyBankInfo}"/>
+            <StackLayout />
+            <!-- Afternoon hourly bank -->
+            <view:SwitchView Description="Banca ore sera"
+                             Switch="{Binding HourlyBankOnLateExit}"
+                             Info="{x:Static capt:Captions.AfternoonHourlyBankInfo}"/>
+            <StackLayout />
+            <!-- Minimum hourly bank -->
+            <view:TimeView Description="Banca ore giornaliera"
+                           Time="{Binding MaxHourlyBankConsumption}"
+                           Info="{x:Static capt:Captions.MaxHourlyBankConsumption}"/>
+        </VerticalStackLayout>
+    </DataTemplate>
+
+    <!-- Late settings -->
+    <DataTemplate x:DataType="{x:Type entities:Settings}" x:Key="LateTemplate">
+        <VerticalStackLayout Margin="12">
+            <!-- Early pause late -->
+            <view:SwitchView Description="Ritardo pausa anticipata"
+                             Switch="{Binding LateOnEarlyLunchStamp}"
+                             Info="{x:Static capt:Captions.EarlyPauseLateInfo}"/>
+            <StackLayout />
+            <!-- Minimum late -->
+            <view:TimeView Description="Ritardo minimo"
+                           Time="{Binding MinLateCounted}"
+                           Info="{x:Static capt:Captions.MinLateAmountInfo}"/>
+        </VerticalStackLayout>
+    </DataTemplate>
+
+    <!-- Working days settings -->
+    <DataTemplate x:DataType="{x:Type entities:Settings}" x:Key="WorkingDaysTemplate">
+        <VerticalStackLayout Margin="12"
+                             x:Name="workingDaysLayout">
+            <VerticalStackLayout.Resources>
+                <!-- Views to select / deselect every working day -->
+                <Style TargetType="{x:Type view:SelectView}">
+                    <Setter Property="Margin" Value="4" />
+                    <Setter Property="Command" Value="{Binding SelectWorkingDayCommand}" />
+                    <Setter Property="Selected">
+                        <Setter.Value>
+                            <MultiBinding Converter="{StaticResource WorkingDaySelectedCommand}">
+                                <MultiBinding.Bindings>
+                                    <Binding Path="WorkingDays" />
+                                    <Binding Path="Description" Source="{RelativeSource Mode=Self}" />
+                                </MultiBinding.Bindings>
+                            </MultiBinding>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </VerticalStackLayout.Resources>
+            <view:SelectView Description="Lunedì" />
+            
+            <view:SelectView Description="Martedì" />
+            
+            <view:SelectView Description="Mercoledì" />
+            
+            <view:SelectView Description="Giovedì" />
+            
+            <view:SelectView Description="Venerdì" />
+            
+            <view:SelectView Description="Sabato" />
+            
+            <view:SelectView Description="Domenica" />
+        </VerticalStackLayout>
+    </DataTemplate>
+
+    <!-- Theme settings -->
+    <DataTemplate x:DataType="{x:Type entities:Settings}" x:Key="ThemeTemplate">
+        <HorizontalStackLayout HorizontalOptions="Center"
+                               VerticalOptions="Center">
+            <!-- Light theme -->
+            <view:ThemeView Description="Tema chiaro"
+                            Theme="{StaticResource True}"
+                            Selected="{Binding Theme, Mode=TwoWay}"
+                            Command="{Binding SetThemeCommand}" 
+                            Margin="8"/>
+
+            <!-- Dark theme -->
+            <view:ThemeView Description="Tema scuro"
+                            Theme="{StaticResource False}"
+                            Selected="{Binding Theme, Mode=TwoWay, Converter={toolkit:InvertedBoolConverter}}" 
+                            Command="{Binding SetThemeCommand}"
+                            Margin="8"/>
+        </HorizontalStackLayout>
+    </DataTemplate>
+
+    <!-- Contacts page -->
+    <DataTemplate x:DataType="{x:Type entities:Settings}" x:Key="ContactsTemplate">
+        <VerticalStackLayout HorizontalOptions="Center"
+                             VerticalOptions="Fill">
+            <VerticalStackLayout.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="Margin" Value="12, 12, 12, 0" />
+                    <Setter Property="Padding" Value="8" />
+                </Style>
+            </VerticalStackLayout.Resources>
+
+            <!-- Contact type -->
+            <Border HorizontalOptions="Fill">
+                <VerticalStackLayout>
+                    <Label Text="Motivo del contatto"
+                           Margin="0, 8, 0, 4"
+                           Style="{StaticResource InfoLabel}"
+                           HorizontalOptions="Center"/>
+
+                    <Picker ItemDisplayBinding="{Binding ., Converter={StaticResource EmailTypeDisplayConverter}}"
+                            SelectedItem="{Binding EmailParameters.EmailType}"
+                            WidthRequest="220"
+                            HorizontalTextAlignment="Center">
+                        <Picker.ItemsSource>
+                            <x:Array Type="{x:Type utilities:EmailType}">
+                                <utilities:EmailType>HelpOrQuestion</utilities:EmailType>
+                                <utilities:EmailType>Suggestion</utilities:EmailType>
+                                <utilities:EmailType>Bug</utilities:EmailType>
+                                <utilities:EmailType>Feedback</utilities:EmailType>
+                                <utilities:EmailType>Other</utilities:EmailType>
+                            </x:Array>
+                        </Picker.ItemsSource>
+                    </Picker>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Message -->
+            <Border>
+                <view:TextView Text="{Binding EmailParameters.Body}"
+                               Description="Messaggio"
+                               MaxLenght="2000" 
+                               IsMultiLine="True"
+                               ShowLenght="True"/>
+            </Border>
+        </VerticalStackLayout>
+    </DataTemplate>
+
+    <!-- Reset application -->
+    <DataTemplate x:DataType="{x:Type entities:Settings}" x:Key="ResetTemplate">
+        <VerticalStackLayout HorizontalOptions="Center"
+                             VerticalOptions="Center">
+            <Image Source="../../Resources/Images/databasedelete.png"
+                   HeightRequest="80">
+                <Image.Behaviors>
+                    <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray100}}" />
+                </Image.Behaviors>
+            </Image>
+
+            <Label Text="{x:Static capt:Captions.SettingsDBResetInfo}"
+                   Style="{StaticResource MediumLabel}"
+                   Margin="16"
+                   LineBreakMode="WordWrap"
+                   HorizontalTextAlignment="Center"/>
+        </VerticalStackLayout>
+    </DataTemplate>
+</ResourceDictionary>

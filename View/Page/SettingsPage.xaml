@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<view:BaseContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                      xmlns:view="clr-namespace:TimesheetApp.View"
+                      xmlns:vm="clr-namespace:TimesheetApp.ViewModel.Page"
+                      xmlns:controls="clr-namespace:TimesheetApp.Controls"
+                      xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+                      xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                      xmlns:test="clr-namespace:TimesheetApp.Controls.View"
+                      
+                      x:DataType="vm:SettingsViewModel"
+                      x:Class="TimesheetApp.View.Page.SettingsPage"
+                      x:Name="settings">
+    <Grid RowDefinitions="auto, *, auto">
+        <!-- Header -->
+        <Border Style="{StaticResource HeaderBorder}">
+            <Label Style="{StaticResource TitleLabel}"
+                   Text="Impostazioni" />
+        </Border>
+
+        <ScrollView Grid.Row="1"
+                    VerticalScrollBarVisibility="Never">
+            <VerticalStackLayout Margin="12, 0" >
+                <VerticalStackLayout.Resources>
+                    <DataTemplate x:DataType="{x:Type x:String}" x:Key="DefaultTemplate">
+                        <ViewCell>
+                            <Grid ColumnDefinitions="auto, *, auto"
+                                  Margin="0, 4">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={x:Reference settings}, Path=BindingContext.UpdateSettingsCategoryCommand}"
+                                                          CommandParameter="{Binding .}" />
+                                </Grid.GestureRecognizers>
+                                <Image Grid.Column="0"
+                                       Margin="8"
+                                       Source="{Binding Converter={StaticResource SettingsIconConverter}}">
+                                    <Image.Behaviors>
+                                        <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray100}}" />
+                                    </Image.Behaviors>
+                                </Image>
+
+                                <Label Grid.Column="1" 
+                                       Text="{Binding }"
+                                       Style="{StaticResource SmallLabel}"
+                                       HorizontalOptions="Start"
+                                       Margin="8"/>
+
+                                <Image Grid.Column="2"
+                                       Style="{StaticResource DetailsImage}"/>
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="Margin" Value="0, 12, 0, 0" />
+                        <Setter Property="Padding" Value="12, 8" />
+                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray50}, Dark={StaticResource Gray700}}" />
+                    </Style>
+
+                    <Style TargetType="{x:Type ListView}">
+                        <Setter Property="ItemTemplate" Value="{StaticResource DefaultTemplate}" />
+                    </Style>
+                </VerticalStackLayout.Resources>
+                
+                <!-- Amount settings -->
+                <Border>
+                    <ListView>
+                        <ListView.ItemsSource>
+                            <x:Array Type="{x:Type x:String}">
+                                <x:String>Straordinari</x:String>
+                                <x:String>Ritardo</x:String>
+                                <x:String>Banca ore</x:String>
+                                <x:String>Giorni lavorativi</x:String>
+                            </x:Array>
+                        </ListView.ItemsSource>
+                    </ListView>
+                </Border>
+
+                <!-- Theme settings -->
+                <Border>
+                    <ListView>
+                        <ListView.ItemsSource>
+                            <x:Array Type="{x:Type x:String}">
+                                <x:String>Tema</x:String>
+                            </x:Array>
+                        </ListView.ItemsSource>
+                    </ListView>
+                </Border>
+
+                <!-- Contacts / reset -->
+                <Border>
+                    <ListView>
+                        <ListView.ItemsSource>
+                            <x:Array Type="{x:Type x:String}">
+                                <x:String>Contatti</x:String>
+                                <x:String>Ripristina</x:String>
+                            </x:Array>
+                        </ListView.ItemsSource>
+                    </ListView>
+                </Border>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Label Grid.Row="2"
+               Margin="8"
+               Text="TimeSheetAPP - 1.0.0"
+               Style="{StaticResource InfoLabel}" 
+               HorizontalOptions="Center"/>
+    </Grid>
+</view:BaseContentPage>

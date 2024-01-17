@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<local:MonthlyControl xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                      xmlns:local="clr-namespace:TimesheetApp.Controls.Monthly"
+                      xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                      xmlns:entities="clr-namespace:TimesheetApp.Model.Entities"
+                      xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+                      xmlns:ts="clr-namespace:TimesheetApp.Controls.Timesheet"
+                      xmlns:utilities="clr-namespace:TimesheetApp.Model.Utilities"
+                      
+                      x:Class="TimesheetApp.Controls.Monthly.CalendarControl"
+                      x:DataType="local:CalendarControl"
+                      x:Name="Calendar">
+    <Grid>
+        <CollectionView Margin="8"
+                        BindingContext="{x:Reference Calendar}"
+                        ItemsSource="{Binding AmountTimesheets}"
+                        IsVisible="{Binding IsBusy, Converter={toolkit:InvertedBoolConverter}}">
+            <CollectionView.Header>
+                <Grid ColumnDefinitions="*, *, *, *, *, *, *">
+                    <Grid.Resources>
+                        <Style TargetType="Label">
+                            <Setter Property="FontAttributes" Value="Bold" />
+                            <Setter Property="Margin" Value="0, 8" />
+                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray950}, Dark={StaticResource Gray25}}" />
+                        </Style>
+                    </Grid.Resources>
+                    <Label Text="L" Grid.Column="0" />
+                    <Label Text="M" Grid.Column="1" />
+                    <Label Text="M" Grid.Column="2" />
+                    <Label Text="G" Grid.Column="3" />
+                    <Label Text="V" Grid.Column="4" />
+                    <Label Text="S" Grid.Column="5" />
+                    <Label Text="D" Grid.Column="6" />
+                </Grid>
+            </CollectionView.Header>
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical"
+                                 Span="7" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="utilities:AmountTimesheet">
+                    <Border Margin="2"
+                            Padding="0, 2"
+                            x:Name="Day">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray50}, Dark={StaticResource Gray900}}" />
+                                <Style.Triggers>
+                                    <DataTrigger TargetType="Border"
+                                                 Binding="{Binding Timesheet.Today.DayOfWeek}"
+                                                 Value="{x:Static sys:DayOfWeek.Saturday}">
+                                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray700}}" />
+                                    </DataTrigger>
+
+                                    <DataTrigger TargetType="Border"
+                                                 Binding="{Binding Timesheet.Today.DayOfWeek}"
+                                                 Value="{x:Static sys:DayOfWeek.Sunday}">
+                                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray700}}" />
+                                    </DataTrigger>
+
+                                    <DataTrigger TargetType="Border"
+                                                 Binding="{Binding Timesheet.Today.Date}"
+                                                 Value="{x:Static sys:DateTime.Today}">
+                                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource Primary}}" />
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="Border"
+                                                 Binding="{Binding IsCurrentMonth}"
+                                                 Value="False">
+                                        <Setter Property="Opacity" Value="0.3" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="DaySelectedEventHandler" />
+                        </Border.GestureRecognizers>
+                        <Grid RowDefinitions="6*, 4*">
+                            <Label Grid.Row="0"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"
+                                   Text="{Binding Timesheet.Today.Day}"
+                                   Margin="4">
+                                <Label.Style>
+                                    <Style TargetType="Label">
+                                        <Style.Triggers>
+                                            <DataTrigger TargetType="Label"
+                                                         Binding="{Binding Timesheet.Today.Date}"
+                                                         Value="{x:Static sys:DateTime.Today}">
+                                                <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Tertiary}, Dark={StaticResource White}}" />
+                                                <Setter Property="FontAttributes" Value="Bold" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Label.Style>
+                            </Label>
+
+                            <ts:ListAmountsControl Grid.Row="1"
+                                                   TimeSheet="{Binding Timesheet}"
+                                                   IsCompact="True"
+                                                   HorizontalOptions="Center" 
+                                                   HeightRequest="18"/>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <ActivityIndicator Color="{StaticResource Primary}"
+                           IsRunning="{Binding IsBusy}" 
+                           HeightRequest="40"/>
+    </Grid>
+</local:MonthlyControl>

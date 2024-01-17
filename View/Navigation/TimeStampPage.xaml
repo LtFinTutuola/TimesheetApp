@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<view:BaseContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                      xmlns:view="clr-namespace:TimesheetApp.View"
+                      xmlns:vm="clr-namespace:TimesheetApp.ViewModel.Navigation"
+                      xmlns:entities="clr-namespace:TimesheetApp.Model.Entities"
+                      xmlns:controls="clr-namespace:TimesheetApp.Controls.View"
+                      
+                      x:Class="TimesheetApp.View.Navigation.TimeStampPage"
+                      x:DataType="vm:TimeStampViewModel">
+    <Grid RowDefinitions="auto, *, auto">
+        <Grid.Resources>
+            <Style TargetType="{x:Type Button}" x:Key="PickerButton">
+                <Setter Property="BackgroundColor" Value="Transparent" />
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="FontSize" Value="72" />
+                <Setter Property="HorizontalOptions" Value="Start" />
+                <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray950}, Dark={StaticResource Gray100}}" />
+                <Setter Property="VerticalOptions" Value="Center" />
+                <Setter Property="Command" Value="{Binding UpdateStampTimeCommand}" />
+            </Style>
+
+            <Style TargetType="{x:Type Label}">
+                <Setter Property="TextColor" Value="{StaticResource Gray400}" />
+                <Setter Property="HorizontalTextAlignment" Value="Center" />
+            </Style>
+        </Grid.Resources>
+
+        <!-- Header -->
+        <Border Style="{StaticResource HeaderBorder}">
+            <Grid ColumnDefinitions="auto, *, auto"
+                  Margin="12, 0">
+                <ImageButton Style="{StaticResource BackButton}"/>
+
+                <Label Grid.Column="1">
+                    <Label.Style>
+                        <Style TargetType="{x:Type Label}" BasedOn="{StaticResource TitleLabel}">
+                            <Setter Property="Text" Value="Modifica timbratura" />
+                            <Style.Triggers>
+                                <DataTrigger TargetType="{x:Type Label}" Binding="{Binding TimeStamp.ID}" Value="0">
+                                    <Setter Property="Text" Value="Nuova timbratura" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Label.Style>
+                </Label>
+
+                <!-- Delete -->
+                <ImageButton Command="{Binding DeleteTimeStampCommand}"
+                             Source="../../Resources/Images/delete.png">
+                    <ImageButton.Style>
+                        <Style TargetType="{x:Type ImageButton}" BasedOn="{StaticResource RightHeaderButton}">
+                            <Style.Triggers>
+                                <DataTrigger TargetType="{x:Type ImageButton}" 
+                                             Binding="{Binding CanDelete}" 
+                                             Value="False">
+                                    <Setter Property="IsEnabled" Value="False" />
+                                    <Setter Property="Opacity" Value="0.3" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ImageButton.Style>
+                </ImageButton>
+            </Grid>
+        </Border>
+
+        <VerticalStackLayout Grid.Row="1"
+                             HorizontalOptions="Center"
+                             VerticalOptions="Center">
+
+            <Label Text="Orario"
+                   Margin="0, 0, 0, -8"/>
+            
+            <!-- Timestamp time -->
+            <Button Style="{StaticResource PickerButton}"
+                    Text="{Binding TimeStamp.Stamp, StringFormat='{0:HH:mm}'}"
+                    HorizontalOptions="Center"/>
+
+            <Label Text="Timbratura"
+                   Margin="0, 8, 0, 4"/>
+            
+            <!-- Stamp type -->
+            <Border>
+                <Picker ItemsSource="{Binding AvailableStamps}"
+                        SelectedItem="{Binding TimeStamp.StampType, Mode=TwoWay}"
+                        ItemDisplayBinding="{Binding ., Converter={StaticResource StampTypeDisplayConverter}}"
+                        WidthRequest="220"
+                        FontSize="18"
+                        HorizontalTextAlignment="Center"
+                        x:Name="stampTypePicker">
+                    <Picker.Style>
+                        <Style TargetType="{x:Type Picker}">
+                            <Setter Property="IsEnabled" Value="False" />
+                            <Style.Triggers>
+                                <DataTrigger TargetType="{x:Type Picker}" 
+                                             Binding="{Binding TimeStamp.ID}" 
+                                             Value="0">
+                                    <Setter Property="IsEnabled" Value="True" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Picker.Style>
+                </Picker>
+            </Border>
+
+            <!-- Late enter / early exit -->
+            <VerticalStackLayout>
+                <VerticalStackLayout.Style>
+                    <Style TargetType="{x:Type VerticalStackLayout}">
+                        <Style.Triggers>
+                            <DataTrigger TargetType="{x:Type VerticalStackLayout}"
+                                         Binding="{Binding Source={x:Reference stampTypePicker}, Path=SelectedItem}"
+                                         Value="{x:Static entities:StampType.StartLunchPause}">
+                                <Setter Property="IsVisible" Value="False" />
+                            </DataTrigger>
+                            <DataTrigger TargetType="{x:Type VerticalStackLayout}"
+                                         Binding="{Binding Source={x:Reference stampTypePicker}, Path=SelectedItem}"
+                                         Value="{x:Static entities:StampType.EndLunchPause}">
+                                <Setter Property="IsVisible" Value="False" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </VerticalStackLayout.Style>
+                <Label Margin="0, 16, 0, 0" >
+                    <Label.Style>
+                        <Style TargetType="{x:Type Label}">
+                            <Setter Property="TextColor" Value="{StaticResource Gray400}" />
+                            <Style.Triggers>
+                                <DataTrigger TargetType="{x:Type Label}"
+                                             Binding="{Binding Source={x:Reference stampTypePicker}, Path=SelectedItem}"
+                                             Value="{x:Static entities:StampType.MorningEnter}">
+                                    <Setter Property="Text" Value="Entrata posticipata" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="{x:Type Label}"
+                                             Binding="{Binding Source={x:Reference stampTypePicker}, Path=SelectedItem}"
+                                             Value="{x:Static entities:StampType.AfternoonExit}">
+                                    <Setter Property="Text" Value="Uscita anticipata" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Label.Style>
+                </Label>
+                <CheckBox IsChecked="{Binding TimeStamp.HasPermit, Mode=TwoWay}" />
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+
+        <!-- Save / update -->
+        <Button Grid.Row="2"
+                Style="{StaticResource MainButton}"
+                Text="Salva"
+                Command="{Binding SaveUpdateTimestampCommand}" />
+    </Grid>
+    
+</view:BaseContentPage>

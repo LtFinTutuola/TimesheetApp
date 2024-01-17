@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xaml-comp compile="true" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <Style TargetType="{x:Type Label}">
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray950}, Dark={StaticResource Gray25}}" />
+        <Setter Property="HorizontalOptions" Value="Center" />
+        <Setter Property="VerticalOptions" Value="Center" />
+    </Style>
+
+    <Style TargetType="{x:Type Label}" x:Key="BoldLabel">
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray100}}" />
+        <Setter Property="FontAttributes" Value="Bold" />
+    </Style>
+
+    <Style TargetType="{x:Type Label}" x:Key="SmallLabel">
+        <Setter Property="FontSize" Value="14" />
+    </Style>
+    
+    <Style TargetType="{x:Type Label}" x:Key="SmallBoldLabel" BasedOn="{StaticResource BoldLabel}">
+        <Setter Property="FontSize" Value="14" />        
+    </Style>
+
+    <Style TargetType="{x:Type Label}" x:Key="MediumLabel">
+        <Setter Property="FontSize" Value="16" />
+    </Style>
+    
+    <Style TargetType="{x:Type Label}" x:Key="MediumBoldLabel" BasedOn="{StaticResource BoldLabel}">
+        <Setter Property="FontSize" Value="16" />
+    </Style>
+
+    <Style TargetType="{x:Type Label}" x:Key="BigLabel">
+        <Setter Property="FontSize" Value="18" />
+    </Style>
+
+    <Style TargetType="{x:Type Label}" x:Key="BigBoldLabel" BasedOn="{StaticResource BoldLabel}">
+        <Setter Property="FontSize" Value="18" />
+    </Style>
+
+    <Style TargetType="{x:Type Label}" x:Key="DescriptionLabel">
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="Margin" Value="0, 0, 0, -2" />
+        <Setter Property="HorizontalOptions" Value="Start" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray200}}" />
+    </Style>
+
+    <Style TargetType="{x:Type Label}" x:Key="InfoLabel">
+        <Setter Property="FontSize" Value="12.5" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray400}}" />
+        <Setter Property="LineBreakMode" Value="WordWrap" />
+        <Setter Property="HorizontalOptions" Value="Start" />
+        <Setter Property="Margin" Value="0, 4, 0, 0" />
+        <Style.Triggers>
+            <DataTrigger TargetType="{x:Type Label}"
+                         Binding="{Binding Source={RelativeSource Mode=Self}, Path=Text}"
+                         Value="{x:Static x:String.Empty}">
+                <Setter Property="IsVisible" Value="False" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="{x:Type Label}" x:Key="TitleLabel">
+        <Setter Property="FontSize" Value="21" />
+        <Setter Property="TextColor" Value="{StaticResource White}" />
+        <Setter Property="Margin" Value="0, -4, 0, 0" />
+    </Style>
+
+    <Style TargetType="{x:Type Label}" x:Key="ListHeaderLabel" BasedOn="{StaticResource BoldLabel}">
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray200}}" />
+        <Setter Property="HorizontalOptions" Value="Start" />
+    </Style>
+</ResourceDictionary>

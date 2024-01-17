@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<local:BaseView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:local="clr-namespace:TimesheetApp.Controls.View"
+                xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+                
+                x:Class="TimesheetApp.Controls.View.TextView"
+                x:DataType="local:TextView"
+                x:Name="this">
+    <VerticalStackLayout BindingContext="{x:Reference this}">
+        <Grid ColumnDefinitions="auto, *">
+            <Grid.Resources>
+                <ResourceDictionary Source="ViewTemplate.xaml" />
+            </Grid.Resources>
+
+            <Image Grid.Column="0" />
+
+            <Frame Grid.Column="1"
+                   HorizontalOptions="Fill"
+                   BorderColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Secondary}}"
+                   BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Secondary}}"
+                   Margin="12, 2, 8, 2"
+                   Padding="0, 0, 0, 2"
+                   CornerRadius="0">
+                <Editor Text="{Binding Text, Mode=TwoWay}"
+                        Placeholder="{Binding Description}"
+                        PlaceholderColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Gray50}}"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource Gray50}, Dark={StaticResource Gray700}}" 
+                        Keyboard="Chat" 
+                        IsTextPredictionEnabled="True"
+                        MaxLength="{Binding MaxLenght}"
+                        AutoSize="TextChanges">
+                    <Editor.Style>
+                        <Style TargetType="{x:Type Editor}">
+                            <Setter Property="MaximumHeightRequest" Value="50" />
+                            <Style.Triggers>
+                                <DataTrigger TargetType="{x:Type Editor}"
+                                             Binding="{Binding IsMultiLine}"
+                                             Value="True">
+                                    <Setter Property="MaximumHeightRequest" Value="300" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Editor.Style>
+                </Editor>
+            </Frame>
+        </Grid>
+
+        <Label Margin="12, 0"
+               Style="{StaticResource InfoLabel}"
+               IsVisible="{Binding ShowLenght}">
+            <Label.FormattedText>
+                <FormattedString>
+                    <Span Text="{Binding Text.Length}" />
+                    <Span Text="{Binding MaxLenght, StringFormat='/ {0} caratteri'}" />
+                </FormattedString>
+            </Label.FormattedText>
+        </Label>
+    </VerticalStackLayout>
+</local:BaseView>

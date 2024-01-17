@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               xmlns:behaviors="clr-namespace:TimesheetApp.Resources.Behaviors"
+               x:Class="TimesheetApp.Popups.TimePickerPopup" >
+    <Grid RowDefinitions="auto, *, auto"
+          BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray950}}">
+        <Grid.Resources>
+            <Style TargetType="{x:Type Border}">
+                <Setter Property="HeightRequest" Value="140" />
+                <Setter Property="WidthRequest" Value="140" />
+                <Setter Property="Margin" Value="12" />
+            </Style>
+
+            <Style TargetType="{x:Type Entry}">
+                <Setter Property="HorizontalOptions" Value="Center" />
+                <Setter Property="VerticalOptions" Value="Center" />
+                <Setter Property="Keyboard" Value="Numeric" />
+                <Setter Property="FontSize" Value="70" />
+                <Setter Property="VerticalTextAlignment" Value="Center" />
+                <Setter Property="CursorPosition" Value="2" />
+            </Style>
+        </Grid.Resources>
+
+        <Label Grid.Row="0"
+               HorizontalOptions="Center"
+               Margin="18, 12"
+               Style="{StaticResource BigBoldLabel}"
+               x:Name="MessageLabel" />       
+
+        <HorizontalStackLayout Grid.Row="1">
+            <Border>
+                <Entry x:Name="HourEntry" TextChanged="HourEntry_TextChanged" />
+            </Border>
+
+            <Label Text=":"
+                   FontAttributes="Bold"
+                   FontSize="60"
+                   Margin="0, -6, 0, 0"/>
+
+            <Border>
+                <Entry x:Name="MinuteEntry" TextChanged="MinuteEntry_TextChanged" />
+            </Border>
+        </HorizontalStackLayout>
+
+        <Button Grid.Row="2"
+                Style="{StaticResource MainButton}"
+                Text="Conferma"
+                Margin="12"
+                Clicked="ConfirmEvent" />
+    </Grid>
+</toolkit:Popup>
