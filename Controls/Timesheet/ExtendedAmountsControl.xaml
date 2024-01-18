@@ -12,12 +12,13 @@
                 HorizontalScrollBarVisibility="Never"
                 VerticalScrollBarVisibility="Never"
                 BindingContext="{x:Reference AmountsControl}" >
-        <CollectionView ItemsSource="{Binding Amounts}"
-                        IsEnabled="False" 
-                        ItemTemplate="{StaticResource VerticalAmountsTemplate}">
-            <CollectionView.Resources>
+
+        <ListView ItemsSource="{Binding Amounts}"
+                  IsEnabled="False"
+                  ItemTemplate="{StaticResource VerticalAmountsTemplate}">
+            <ListView.Resources>
                 <ResourceDictionary Source="../../Resources/Templates/Amounts/AmountsControlTemplates.xaml" />
-            </CollectionView.Resources>
-        </CollectionView>
+            </ListView.Resources>
+        </ListView>
     </ScrollView>
 </local:TimesheetControl>

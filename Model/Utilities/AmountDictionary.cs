@@ -2,7 +2,7 @@
 
 namespace TimesheetApp.Model.Utilities
 {
-    public struct AmountsDictionary
+    public class AmountsDictionary
     {
         public AmountKind AmountKind { get; set; }
         public string Amount { get; set; }

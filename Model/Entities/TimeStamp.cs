@@ -1,4 +1,5 @@
 ﻿using TimesheetApp.Model.Context;
+using TimesheetApp.Resources.Converters;
 
 namespace TimesheetApp.Model.Entities
 {
@@ -25,6 +26,13 @@ namespace TimesheetApp.Model.Entities
         }
         public TimeStamp() { }
 
+        /// <summary>
+        /// deny validation in following scenarios
+        /// - timestamp hour is in future
+        /// - another timestamp with the same stamp type is alredy registered in referred timesheet
+        /// - violation of timesheet timetable order
+        /// - if timestamp is EndLunchPause and StartLunchPause is missing
+        /// </summary>
         public override async Task<bool?> Validate(object entities)
         {
             try
@@ -38,7 +46,7 @@ namespace TimesheetApp.Model.Entities
                 var timestamps = (IEnumerable<TimeStamp>)entities;
                 if (timestamps.Any(t => t.StampType == StampType))
                 {
-                    if (await Alerts.ShowConfirm(Captions.TimestampAlrReg, GetStampTypeDesc(StampType))) return null;
+                    if (await Alerts.ShowConfirm(Captions.TimestampAlrReg, (string)StampTypeDisplayConverter.Convert(StampType))) return null;
                     else return false;
                 }
                 if (!timestamps.Any() && StampType != StampType.MorningEnter)
@@ -108,18 +116,6 @@ namespace TimesheetApp.Model.Entities
                 return false;
             }
             return true;
-        }
-
-        public static string GetStampTypeDesc(StampType stamp)
-        {
-            return stamp switch
-            {
-                StampType.MorningEnter => "Entrata",
-                StampType.StartLunchPause => "Inizio pausa pranzo",
-                StampType.EndLunchPause => "Fine pausa pranzo",
-                StampType.AfternoonExit => "Uscita",
-                _ => "",
-            };
         }
     }
 }

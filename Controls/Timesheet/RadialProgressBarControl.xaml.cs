@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using TimesheetApp.Model.Entities;
 
 namespace TimesheetApp.Controls.Timesheet;
@@ -73,10 +74,15 @@ public partial class RadialProgressBarControl : TimesheetControl
         }
     }
 
-    private void SetTimerToShow()
+    /// <summary>
+    /// evaluating completion percentage of current working day and show it graphically
+    /// showing remaining time to end of working day, to the end of lunch pause or next ovetime ratio completed
+    /// </summary>
+    private async void SetTimerToShow()
     {
         try
         {
+            // if there aren't timestamps, show default values
             if (TimeStamps == null || !TimeStamps.Any())
             {
                 ProgressLabel.Text = "--:--:--";
@@ -87,10 +93,12 @@ public partial class RadialProgressBarControl : TimesheetControl
             else
             {
                 var lastStamp = TimeStamps.LastOrDefault();
+                if (TimeSheet.Workshift == null) await TimeSheet.SetWorkshift();
 
                 switch (lastStamp.StampType)
                 {
                     case StampType.StartLunchPause:
+                        // if lunch pause is alredy expired, show a red alert and full percentage completion
                         if (TimeSheet.Workshift.LunchPauseEnding < DateTime.Now.TimeOfDay)
                         {
                             ProgressLabel.Text = "00:00:00";
@@ -98,14 +106,16 @@ public partial class RadialProgressBarControl : TimesheetControl
                             DesciptionLabel.Text = "Fine pausa pranzo";
                             Progress = 100d;
                             ProgressColor = new Color(255, 0, 0);
-                            break;
                         }
-
-                        ProgressLabel.Text = (TimeSheet.Workshift.LunchPauseEnding - DateTime.Now.TimeOfDay).ToString("hh\\:mm\\:ss");
-                        NextStampLabel.Text = TimeSheet.Workshift.LunchPauseEnding.ToString("hh\\:mm");
-                        DesciptionLabel.Text = "Fine pausa pranzo";
-                        Progress = GetProgressPercentage(TimeSheet.Workshift.LunchPauseStarting, TimeSheet.Workshift.LunchPauseEnding);
-                        ProgressColor = new Color(81, 43, 212);
+                        // show remaining time to lunch pause ending
+                        else
+                        {
+                            ProgressLabel.Text = (TimeSheet.Workshift.LunchPauseEnding - DateTime.Now.TimeOfDay).ToString("hh\\:mm\\:ss");
+                            NextStampLabel.Text = TimeSheet.Workshift.LunchPauseEnding.ToString("hh\\:mm");
+                            DesciptionLabel.Text = "Fine pausa pranzo";
+                            Progress = GetProgressPercentage(TimeSheet.Workshift.LunchPauseStarting, TimeSheet.Workshift.LunchPauseEnding);
+                            ProgressColor = new Color(81, 43, 212);
+                        }
                         break;
 
                     case StampType.MorningEnter:
@@ -114,6 +124,8 @@ public partial class RadialProgressBarControl : TimesheetControl
                             ? lastStamp : TimeStamps.FirstOrDefault(t => t.StampType == StampType.MorningEnter);
 
                         var endOfWorkingDay = DailyTimesheet.GetEndOfWorkingDay(morningEnter, TimeSheet.Workshift);
+                        
+                        // if expected end of working day is not occurred yet, show remaining time percentage
                         if (endOfWorkingDay > DateTime.Now.TimeOfDay)
                         {
                             ProgressLabel.Text = (endOfWorkingDay - DateTime.Now.TimeOfDay).ToString("hh\\:mm\\:ss");
@@ -122,6 +134,7 @@ public partial class RadialProgressBarControl : TimesheetControl
                             Progress = GetProgressPercentage(morningEnter.Stamp.TimeOfDay, endOfWorkingDay);
                             ProgressColor = new Color(81, 43, 212);
                         }
+                        // calculate next overtime ratio and remaining time to it
                         else
                         {
                             var settings = Settings.GetCurrentSettings();
@@ -141,6 +154,7 @@ public partial class RadialProgressBarControl : TimesheetControl
                         }
                         break;
 
+                    // if working day is completed, show a placeholder message
                     case StampType.AfternoonExit:
                         ProgressLabel.Text = "00:00:00";
                         NextStampLabel.Text = "--:--";

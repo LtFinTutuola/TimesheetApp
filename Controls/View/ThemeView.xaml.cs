@@ -1,6 +1,6 @@
 namespace TimesheetApp.Controls.View;
 
-public partial class ThemeView : SelectView
+public partial class ThemeView : SelectableView
 {
     public static readonly BindableProperty ThemeProperty = BindableProperty.Create(
             nameof(Theme),
@@ -15,9 +15,9 @@ public partial class ThemeView : SelectView
     }
 
     public ThemeView()
-	{
-		InitializeComponent();
-	}
+    {
+        InitializeComponent();
+    }
 
-    private new void SelectViewTapped(object sender, EventArgs e) => Command.Execute(Theme);
+    protected override void SelectViewTapped(object sender, EventArgs e) => Command.Execute(Theme);
 }

@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
+using System.Reflection.Metadata.Ecma335;
 using TimesheetApp.Model.Context;
 using TimesheetApp.Model.Entities;
 using TimesheetApp.Model.Utilities;
@@ -25,7 +26,13 @@ namespace TimesheetApp.ViewModel.Page
             await ExecuteAsync(async () =>
             {
                 var monthDays = GetDays(_currentMonth.Year, _currentMonth.Month, false);
-                TimeSheets = new(await _context.GetFileteredAsync<DailyTimesheet>(t => monthDays.Contains(t.Today) && t.Today <= DateTime.Today));
+                var startRange = new DateTime(_currentMonth.Year, _currentMonth.Month, 1);
+                var endRange = new DateTime(_currentMonth.Year, _currentMonth.Month, DateTime.DaysInMonth(_currentMonth.Year, _currentMonth.Month));
+                
+                var stamps = (await _context.GetFileteredAsync<TimeStamp>(t => t.Stamp >= startRange && t.Stamp <= endRange)).Select(s => s.TimesheetID);
+                TimeSheets = new(await _context.GetFileteredAsync<DailyTimesheet>(t => monthDays.Contains(t.Today) 
+                                                                                    && t.Today <= DateTime.Today
+                                                                                    && stamps.Contains(t.ID)));
                 await GetMonthAmount();
             });
         }
@@ -43,10 +50,12 @@ namespace TimesheetApp.ViewModel.Page
         /// </summary>
         private async Task GetMonthAmount()
         {
+            var totOvertime = new TimeSpan(_timeSheets.Select(t => t.OvertimeAmount.Ticks).Sum());
+            var totLate = new TimeSpan(_timeSheets.Select(t => t.LateAmount.Ticks).Sum());
             var rawAmounts = new List<AmountsDictionary>
             {
-                new(AmountKind.Overtime, new TimeSpan(_timeSheets.Select(t => t.OvertimeAmount.Ticks).Sum()).ToString("hh\\:mm")),
-                new(AmountKind.Late, new TimeSpan(_timeSheets.Select(t => t.LateAmount.Ticks).Sum()).ToString("hh\\:mm"))
+                new(AmountKind.Overtime, FormatAmount(new TimeSpan(_timeSheets.Select(t => t.OvertimeAmount.Ticks).Sum()))),
+                new(AmountKind.Late, FormatAmount(new TimeSpan(_timeSheets.Select(t => t.LateAmount.Ticks).Sum())))
             };
 
             if (Settings.GetCurrentSettings().HourlyBankOnLateExit)
@@ -56,7 +65,7 @@ namespace TimesheetApp.ViewModel.Page
                 var tsheets = await _context.GetFileteredAsync<DailyTimesheet>(t => t.Today <= currentMonth && t.Today >= startYear);
                 var hrlBank = new TimeSpan(tsheets.Select(t => t.HourlyBankAmount.Ticks).Sum());
                 rawAmounts.Add(new(hrlBank >= TimeSpan.Zero
-                    ? AmountKind.HourlyBank : AmountKind.NegativeHourlyBank, hrlBank.ToString("hh\\:mm")));
+                    ? AmountKind.HourlyBank : AmountKind.NegativeHourlyBank, FormatAmount(hrlBank)));
             }
             Amounts = new(rawAmounts);
         }
@@ -77,6 +86,13 @@ namespace TimesheetApp.ViewModel.Page
                 for (int i = 1; i <= remainingDays; i++) monthDays.Add(monthDays.LastOrDefault().AddDays(1));
             }
             return monthDays;
+        }
+
+        private static string FormatAmount(TimeSpan amount)
+        {
+            return string.Format("{0}:{1}",
+                     Convert.ToInt32(Math.Abs(amount.TotalHours)).ToString().PadLeft(2, '0'),
+                     Convert.ToInt32(Math.Abs(amount.Minutes)).ToString().PadLeft(2, '0'));
         }
     }
 }

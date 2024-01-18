@@ -138,8 +138,10 @@ namespace TimesheetApp.ViewModel.Page
         [RelayCommand]
         public static void ForceDatepickerExecution(DatePicker picker)
         {
-            var handler = picker.Handler as IDatePickerHandler;
+#if ANDROID
+            var handler = picker.Handler as DatePickerHandler;
             handler.PlatformView.PerformClick();
+#endif
         }
         #endregion
 

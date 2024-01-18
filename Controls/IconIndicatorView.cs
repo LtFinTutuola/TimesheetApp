@@ -1,6 +1,7 @@
 ﻿
 namespace TimesheetApp.Controls
 {
+    /// <summary> custom control used to emulate indicator view and show images instead of simple shapes </summary>
     public class IconIndicatorView : CollectionView
     {
         public static readonly BindableProperty PositionProperty = BindableProperty.Create(

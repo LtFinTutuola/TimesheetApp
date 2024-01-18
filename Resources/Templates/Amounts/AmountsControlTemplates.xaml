@@ -23,46 +23,48 @@
 
     <DataTemplate x:Key="VerticalAmountsTemplate"
                   x:DataType="{x:Type utilities:AmountsDictionary}">
-        <Grid ColumnDefinitions="auto, *, auto"
-              Margin="0, 15" >
-            <!-- Amount image -->
-            <Border Grid.Column="0"
-                    Style="{StaticResource RoundedBorder}" >
-                <Image Style="{StaticResource ColorImage}" />
-            </Border>
+        <ViewCell>
+            <Grid ColumnDefinitions="auto, *, auto"
+                  Margin="0, 15" >
+                <!-- Amount image -->
+                <Border Grid.Column="0"
+                        Style="{StaticResource RoundedBorder}" >
+                    <Image Style="{StaticResource ColorImage}" />
+                </Border>
 
-            <!-- Amount kind -->
-            <VerticalStackLayout Grid.Column="1"
-                                 Margin="8, 0"
-                                 HorizontalOptions="Start">
-                <Label Text="{Binding AmountKind, Converter={StaticResource AmountKindDescriptionConverter}}"
-                       Style="{StaticResource BigLabel}"
-                       x:Name="DescLabel"/>
-                <Label Style="{StaticResource InfoLabel}"
-                       Text="(ore:minuti)"
-                       Margin="0"
-                       TextColor="{StaticResource Gray500}"/>
-            </VerticalStackLayout>
+                <!-- Amount kind -->
+                <VerticalStackLayout Grid.Column="1"
+                                     Margin="8, 0"
+                                     HorizontalOptions="Start">
+                    <Label Text="{Binding AmountKind, Converter={StaticResource AmountKindDescriptionConverter}}"
+                           Style="{StaticResource BigLabel}"
+                           x:Name="DescLabel"/>
+                    <Label Style="{StaticResource InfoLabel}"
+                           Text="(ore:minuti)"
+                           Margin="0"
+                           TextColor="{StaticResource Gray500}"/>
+                </VerticalStackLayout>
 
-            <!-- Amount value -->
-            <Label Grid.Column="2"
-                   HorizontalOptions="End"
-                   FontSize="22"
-                   Text="{Binding Amount}">
-                <Label.Style>
-                    <Style TargetType="{x:Type Label}" BasedOn="{StaticResource BoldLabel}">
-                        <Style.Triggers>
-                            <DataTrigger TargetType="{x:Type Label}"
-                                         Binding="{Binding Amount}"
-                                         Value="00:00">
-                                <Setter Property="FontAttributes" Value="None" />
-                                <Setter Property="TextColor" Value="{StaticResource Gray500}" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Label.Style>
-            </Label>
-        </Grid>
+                <!-- Amount value -->
+                <Label Grid.Column="2"
+                       HorizontalOptions="End"
+                       FontSize="22"
+                       Text="{Binding Amount}">
+                    <Label.Style>
+                        <Style TargetType="{x:Type Label}" BasedOn="{StaticResource BoldLabel}">
+                            <Style.Triggers>
+                                <DataTrigger TargetType="{x:Type Label}"
+                                             Binding="{Binding Amount}"
+                                             Value="00:00">
+                                    <Setter Property="FontAttributes" Value="None" />
+                                    <Setter Property="TextColor" Value="{StaticResource Gray500}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Label.Style>
+                </Label>
+            </Grid>
+        </ViewCell>
     </DataTemplate>
 
     <DataTemplate x:Key="HorizontalAmountsTemplate"

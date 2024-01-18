@@ -3,6 +3,9 @@ using TimesheetApp.Model.Entities;
 
 namespace TimesheetApp.Controls.Timesheet;
 
+/// <summary>
+/// custom control to wrap monthly timesheets list in CalendarPage CarouselView
+/// </summary>
 public partial class ListAmountsControl : TimesheetControl
 {
     public static readonly BindableProperty TimeStampProperty = BindableProperty.Create(
@@ -37,8 +40,12 @@ public partial class ListAmountsControl : TimesheetControl
 
     protected override void SetDataInternal(object value)
     {
-        if (TimeStamp != null) return;
-        AmountsList.ItemsSource = (System.Collections.IEnumerable)((DailyTimesheet)value).GetEnumerator();
+        try
+        {
+            if (TimeStamp != null) return;
+            AmountsList.ItemsSource = (System.Collections.IEnumerable)((DailyTimesheet)value).GetEnumerator();
+        }
+        catch { }
     }
 
     private static void SetAmounts(BindableObject bindable, object oldValue, object newValue)
@@ -58,6 +65,7 @@ public partial class ListAmountsControl : TimesheetControl
             var settings = Settings.GetCurrentSettings();
             var stamp = (TimeStamp)value;
             var tSheet = TimeSheet ?? await GetCurrentTimesheet(stamp.TimesheetID);
+            if (tSheet.Workshift == null) await tSheet.SetWorkshift();
 
             if (tSheet.IsOvertimeDay) rawAmounts.Add(AmountKind.OvertimeDay);
             else

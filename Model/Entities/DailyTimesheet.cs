@@ -48,6 +48,7 @@ namespace TimesheetApp.Model.Entities
             IsOvertimeDay = !Settings.GetCurrentSettings().WorkingDays.Contains(Today.DayOfWeek);
         }
 
+        /// <summary> set workshift based on WorkshiftID, if no workshift is assigned, try to assign default one </summary>
         public async Task SetWorkshift()
         {
             var context = new DatabaseContext();
@@ -86,9 +87,19 @@ namespace TimesheetApp.Model.Entities
             WorkshiftID = workshift.ID;
             Workshift = workshift;
 
-            return ID == 0 || await SetAmounts(context);
+            if (ID == 0) await context.AddItemAsync(this);
+            return await SetAmounts(context);
         }
 
+        /// <summary>
+        /// if is working day
+        /// - calculate all amounts matured in current dailytimesheet, based on expected workshift timetables and
+        ///   actual timestamps hours, accordingly to current settings and ratios
+        ///   
+        /// if is overtime day
+        /// - return overtime and hourly bank evaluating whole difference between MorningEnter and AfternoonExit 
+        ///   as overtime, accordingly to current settings and ratios
+        /// </summary>
         public async Task<bool> SetAmounts(DatabaseContext context)
         {
             var settings = Settings.GetCurrentSettings();
@@ -101,6 +112,7 @@ namespace TimesheetApp.Model.Entities
             OvertimeAmount = new();
             HourlyBankAmount = new();
 
+            // amounts evaluations in case of working day
             if(!IsOvertimeDay)
             {
                 foreach (var stamp in stamps)
@@ -134,6 +146,7 @@ namespace TimesheetApp.Model.Entities
                 }
                 return await context.UpdateItemAsync(this);
             }
+            // amounts evaluation in case of overtime day
             else if (IsOvertimeDay && stamps.Any(s => s.StampType == StampType.AfternoonExit))
             {
                 var enter = stamps.FirstOrDefault(s => s.StampType == StampType.MorningEnter);
@@ -167,21 +180,28 @@ namespace TimesheetApp.Model.Entities
             else return TimeSpan.Zero;
         }
 
+        /// <summary>
+        /// return eventual late, overtime or hourly bank matured on MorningEnter timestamp, accordingly to 
+        /// current settings and ratios
+        /// </summary>
         public static async Task<Dictionary<AmountKind, TimeSpan>> GetMorningEnterAmounts(Settings settings, TimeStamp stamp, Workshift workshift, DatabaseContext context = null)
         {
             var result = new Dictionary<AmountKind, TimeSpan>();
-
+            // return permit value, so no further calculations needed
             if (stamp.HasPermit) result.Add(AmountKind.Permit, TimeSpan.Zero);            
             else if (stamp.Stamp.TimeOfDay < workshift.MorningEnter)
             {
+                // get morning enter hourly bank
                 var rawDiff = workshift.MorningEnter - stamp.Stamp.TimeOfDay;
                 if (settings.HourlyBankOnEarlyMorningEnter)
                     result.Add(AmountKind.HourlyBank, TimeSpan.FromMinutes(rawDiff.TotalMinutes % settings.MinOvertimeCounted.TotalMinutes));
 
+                // get morning enter overtime
                 if (settings.OvertimeOnEarlyMorningEnter && rawDiff >= settings.MinOvertimeCounted)
                     result.Add(AmountKind.Overtime, GetTimeDifferenceAmount(stamp.Stamp.TimeOfDay, workshift.MorningEnter,
                         false, settings.MinOvertimeCounted));
             }
+            // get morning enter late
             else if (stamp.Stamp.TimeOfDay > workshift.MorningEnter + workshift.HourlyFlex)
                 result.Add(AmountKind.Late, GetTimeDifferenceAmount(stamp.Stamp.TimeOfDay, workshift.MorningEnter + workshift.HourlyFlex,
                     true, settings.MinLateCounted));
@@ -190,10 +210,15 @@ namespace TimesheetApp.Model.Entities
             return result;
         }
 
+        /// <summary>
+        /// return eventual overtime or hourly bank matured on AfternoonExit timestamp, accordingly to 
+        /// current settings and ratios
+        /// </summary>
         public static async Task<Dictionary<AmountKind, TimeSpan>> GetAfternoonExitAmounts(Settings settings, TimeStamp stamp, Workshift workshift, DatabaseContext context = null)
         {
             var result = new Dictionary<AmountKind, TimeSpan>();
-            if(stamp.HasPermit) result.Add(AmountKind.Permit, TimeSpan.Zero);
+            // return permit value, so no further calculations needed
+            if (stamp.HasPermit) result.Add(AmountKind.Permit, TimeSpan.Zero);
             else
             {
                 var morningEnter = (await (context ?? new DatabaseContext()).GetFileteredAsync<TimeStamp>(
@@ -226,6 +251,13 @@ namespace TimesheetApp.Model.Entities
             return result;
         }
 
+        /// <summary>
+        /// return difference amount for late or overtimes, evaluating expected hour and actual hour and adjusting
+        /// values by amount ratio
+        /// </summary>
+        /// <param name="isLate">define if are evaluating a late or not, in case of late result will be ceiled, otherwise it will be floored</param>
+        /// <param name="diffRatio">requested amount ratio, eg. 30min or 15min </param>
+        /// <returns></returns>
         private static TimeSpan GetTimeDifferenceAmount(TimeSpan firstStamp, TimeSpan secondStamp, bool isLate, TimeSpan diffRatio)
         {
             if(isLate) return diffRatio 
@@ -236,6 +268,10 @@ namespace TimesheetApp.Model.Entities
                     / diffRatio.TotalMinutes));
         }
 
+        /// <summary>
+        /// get expected hour to close timesheet, above this hour extra time will be consider as overtime 
+        /// or hourly bank, according to proper settings
+        /// </summary>
         public static TimeSpan GetEndOfWorkingDay(TimeStamp morningEnter, Workshift workshift)
         {
             if (morningEnter.Stamp.TimeOfDay >= workshift.MorningEnter &&

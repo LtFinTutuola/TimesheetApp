@@ -17,6 +17,13 @@ namespace TimesheetApp.Model.Entities
 
         public Workshift() { }
 
+        /// <summary>
+        /// deny validation in following scenrios
+        /// - description is null or empty
+        /// - another workshift has same description
+        /// - another workshift has same timetables
+        /// - timetables aren't in correct hourly order
+        /// </summary>
         public override async Task<bool?> Validate(object entities)
         {
             var workshifts = (IEnumerable<Workshift>)entities;
@@ -50,6 +57,7 @@ namespace TimesheetApp.Model.Entities
             return true;
         }
 
+        /// <summary> get available stamp types to show in TimeStampPage </summary>
         public StampType[] GetAvailableStampTypes()
         {
             if (HasLunchPause) return (StampType[])Enum.GetValues(typeof(StampType));

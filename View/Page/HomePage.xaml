@@ -13,16 +13,11 @@
                       x:DataType="vm:HomePageViewModel"
                       x:Class="TimesheetApp.View.Page.HomePage"
                       x:Name="home">
-    <view:BaseContentPage.Style>
-        <Style TargetType="{x:Type Page}">            
-            <!-- Behavior to switch status bar color accordingly to header border background, based on current theme -->
-            <Setter Property="Behaviors">
-                <Setter.Value>
-                    <mct:StatusBarBehavior StatusBarColor="{AppThemeBinding Light={StaticResource Tertiary}, Dark={StaticResource Gray900}}" />
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </view:BaseContentPage.Style>
+    
+    <!-- Behavior to switch status bar color accordingly to header border background, based on current theme -->
+    <view:BaseContentPage.Behaviors>
+        <mct:StatusBarBehavior StatusBarColor="{AppThemeBinding Light={StaticResource Tertiary}, Dark={StaticResource Gray900}}" />
+    </view:BaseContentPage.Behaviors>
     <Grid RowDefinitions="auto, 5.25*, 4.75*, auto">
         <!-- Header -->
         <Border Style="{StaticResource HeaderBorder}">
@@ -102,7 +97,7 @@
                         </x:Array>
                     </CarouselView.ItemsSource>
                     <CarouselView.ItemTemplate>
-                        <DataTemplate >
+                        <DataTemplate x:DataType="{x:Type ContentView}">
                             <ContentView Content="{Binding }" />
                         </DataTemplate>
                     </CarouselView.ItemTemplate>
@@ -110,14 +105,16 @@
                 <IndicatorView Grid.Row="1"
                                x:Name="IndicatorView"
                                IndicatorColor="{AppThemeBinding Light={StaticResource Gray50}, Dark={StaticResource Gray900}}"
-                               SelectedIndicatorColor="{StaticResource Primary}"
+                               SelectedIndicatorColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Gray200}}"
                                HorizontalOptions="Center"
                                Margin="8"/>
             </Grid>
         </Border>
         
-        <VerticalStackLayout Grid.Row="2">
-            <Border Margin="12, 12, 12, 0"
+        <Grid Grid.Row="2"
+              RowDefinitions="auto, auto, *">
+            <Border Grid.Row="0"
+                    Margin="12, 12, 12, 0"
                     BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray600}}">
                 <!-- Workaround to solve delay issue if binding directly converter value to isVisible-->
                 <Border.Style>
@@ -153,62 +150,65 @@
                 </Grid>
             </Border>
 
-            <Label Text="Elenco timbrature"
+            <Label Grid.Row="1"
+                   Text="Elenco timbrature"
                    Style="{StaticResource ListHeaderLabel}"
                    Margin="18, 12, 18, 8"/>
 
             <!-- Timestamps -->
-            <ListView ItemsSource="{Binding TimeStamps}">
-                <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="{x:Type entities:TimeStamp}">
-                        <ViewCell>
-                            <Grid ColumnDefinitions="auto, *, auto, auto"
-                                  Margin="16, 0, 16, 8">
-                                <Grid.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding Source={x:Reference home}, Path=BindingContext.ShowTimeStampDetailsCommand}"
-                                                          CommandParameter="{Binding .}" />
-                                </Grid.GestureRecognizers>
-                                <Border Grid.Column="0"
-                                        Style="{StaticResource RoundedBorder}"
-                                        Margin="4, 4, 8, 4">
-                                    <Image Source="{Binding StampType, Converter={StaticResource StampTypeIconConver}}" >
+            <ScrollView Grid.Row="2">
+                <ListView ItemsSource="{Binding TimeStamps}" >
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="{x:Type entities:TimeStamp}">
+                            <ViewCell>
+                                <Grid ColumnDefinitions="auto, *, auto, auto"
+                                      Margin="16, 0, 16, 8">
+                                    <Grid.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={x:Reference home}, Path=BindingContext.ShowTimeStampDetailsCommand}"
+                                                              CommandParameter="{Binding .}" />
+                                    </Grid.GestureRecognizers>
+                                    <Border Grid.Column="0"
+                                            Style="{StaticResource RoundedBorder}"
+                                            Margin="4, 4, 8, 4">
+                                        <Image Source="{Binding StampType, Converter={StaticResource StampTypeIconConver}}" >
+                                            <Image.Behaviors>
+                                                <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray100}}" />
+                                            </Image.Behaviors>
+                                        </Image>
+                                    </Border>
+
+                                    <VerticalStackLayout Grid.Column="1"
+                                                         VerticalOptions="Center"
+                                                         Margin="2, 0" >
+                                        <Label Text="{Binding StampType, Converter={StaticResource StampTypeDisplayConverter}}"
+                                               Style="{StaticResource DescriptionLabel}"/>
+
+                                        <Label Text="{Binding Stamp, StringFormat='{0:HH:mm}'}"
+                                               FontSize="20"
+                                               HorizontalOptions="Start"
+                                               Margin="0, -2, 0, 0"/>
+                                    </VerticalStackLayout>
+
+                                    <!-- Timestamp amounts -->
+                                    <ts:ListAmountsControl Grid.Column="2"
+                                                           VerticalOptions="Center"
+                                                           HorizontalOptions="End"
+                                                           TimeStamp="{Binding }"
+                                                           TimeSheet="{Binding Source={x:Reference home}, Path=BindingContext.TimeSheet}"/>
+
+                                    <Image Grid.Column="3"
+                                           Style="{StaticResource DetailsImage}">
                                         <Image.Behaviors>
                                             <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray100}}" />
                                         </Image.Behaviors>
                                     </Image>
-                                </Border>
-
-                                <VerticalStackLayout Grid.Column="1" 
-                                                     VerticalOptions="Center"
-                                                     Margin="2, 0" >
-                                    <Label Text="{Binding StampType, Converter={StaticResource StampTypeDisplayConverter}}"
-                                           Style="{StaticResource DescriptionLabel}"/>
-
-                                    <Label Text="{Binding Stamp, StringFormat='{0:HH:mm}'}"
-                                           FontSize="20"
-                                           HorizontalOptions="Start"
-                                           Margin="0, -2, 0, 0"/>
-                                </VerticalStackLayout>
-                                
-                                <!-- Timestamp amounts -->
-                                <ts:ListAmountsControl Grid.Column="2"
-                                                       VerticalOptions="Center"
-                                                       HorizontalOptions="End"
-                                                       TimeStamp="{Binding }"
-                                                       TimeSheet="{Binding Source={x:Reference home}, Path=BindingContext.TimeSheet}"/>
-
-                                <Image Grid.Column="3"
-                                       Style="{StaticResource DetailsImage}">
-                                    <Image.Behaviors>
-                                        <toolkit:IconTintColorBehavior TintColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray100}}" />
-                                    </Image.Behaviors>
-                                </Image>
-                            </Grid>
-                        </ViewCell>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </VerticalStackLayout>
+                                </Grid>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </ScrollView>
+        </Grid>
 
         <!-- Add / add directly timestamp button-->
         <Button Grid.Row="3" 

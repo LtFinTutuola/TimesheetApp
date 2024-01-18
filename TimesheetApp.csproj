@@ -15,8 +15,8 @@
 		<ApplicationTitle>TimesheetApp</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.timesheetapp</ApplicationId>
-		<ApplicationIdGuid>42dbb35d-ce82-4b4f-bc41-5f0e018aba33</ApplicationIdGuid>
+		<ApplicationId>com.companyname.TimesheetApp</ApplicationId>
+		<ApplicationIdGuid>49AAFBE9-CA0C-4716-9A86-A5CD90EB13B8</ApplicationIdGuid>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
@@ -30,15 +30,23 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0-android|AnyCPU'">
+	  <AndroidPackageFormat>apk</AndroidPackageFormat>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<!-- App Icon -->
+		<!--<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />-->
+		<MauiIcon Include="Resources\AppIcon\compacticon.png" Color="#512BD4" />
+		<!--<ItemGroup>
+			<MauiIcon Include="Resources\AppIcon\compacticon.png" />
+		</ItemGroup>-->
 
 		<!-- Splash Screen -->
-
+		<MauiSplashScreen Include="Resources\Splash\extendedicon.png" Color="#512BD4" BaseSize="1000,500" />
+		
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
-		<MauiImage Include="Resources\Images\Amounts\*" />
-		<MauiImage Include="Resources\Images\StampType\*" />
 
 		<!-- Custom Fonts -->
 		<MauiFont Include="Resources\Fonts\*" />
@@ -48,30 +56,187 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Remove="Resources\AppIcon\compacticon.png" />
-	  <None Remove="Resources\Images\Amounts\hourlybank.png" />
-	  <None Remove="Resources\Images\Amounts\late.png" />
-	  <None Remove="Resources\Splash\extendedicon.png" />
+	  <AndroidResource Remove="Resources\Images\StampType\StampType\**" />
+	  <Compile Remove="Resources\Images\StampType\StampType\**" />
+	  <EmbeddedResource Remove="Resources\Images\StampType\StampType\**" />
+	  <MauiCss Remove="Resources\Images\StampType\StampType\**" />
+	  <MauiImage Remove="Resources\Images\StampType\StampType\**" />
+	  <MauiXaml Remove="Resources\Images\StampType\StampType\**" />
+	  <None Remove="Resources\Images\StampType\StampType\**" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <MauiIcon Include="Resources\AppIcon\compacticon.png" />
+	  <None Remove="Resources\AppIcon\compacticon.png" />
+	  <None Remove="Resources\Fonts\AlarmClock.ttf" />
+	  <None Remove="Resources\Images\Amounts\overtimeday.png" />
+	  <None Remove="Resources\Images\Amounts\pendingjustify.png" />
+	  <None Remove="Resources\Images\Amounts\permit.png" />
+	  <None Remove="Resources\Images\back.png" />
+	  <None Remove="Resources\Images\clock.png" />
+	  <None Remove="Resources\Images\databasedelete.png" />
+	  <None Remove="Resources\Images\edit.svg" />
+	  <None Remove="Resources\Images\emptylist.png" />
+	  <None Remove="Resources\Images\endlunchpause.svg" />
+	  <None Remove="Resources\Images\gotopage.png" />
+	  <None Remove="Resources\Images\home.svg" />
+	  <None Remove="Resources\Images\hourlybank.png" />
+	  <None Remove="Resources\Images\late.png" />
+	  <None Remove="Resources\Images\menu.png" />
+	  <None Remove="Resources\Images\morningenter.svg" />
+	  <None Remove="Resources\Images\negativehourlybank.png" />
+	  <None Remove="Resources\Images\noamount.png" />
+	  <None Remove="Resources\Images\notes.png" />
+	  <None Remove="Resources\Images\overtime.png" />
+	  <None Remove="Resources\Images\plus.svg" />
+	  <None Remove="Resources\Images\reset.png" />
+	  <None Remove="Resources\Images\settings.svg" />
+	  <None Remove="Resources\Images\StampType\afternoonexit.svg" />
+	  <None Remove="Resources\Images\startlunchpause.svg" />
+	  <None Remove="Resources\Images\workshiftrecap.png" />
+	  <None Remove="Resources\Splash\extendedicon.png" />
+	  <None Remove="Resources\Splash\icona-removebg-preview.png" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <MauiImage Include="Resources\Images\Amounts\hourlybank.png" />
 	  <MauiImage Include="Resources\Images\Amounts\late.png" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <MauiSplashScreen Include="Resources\Splash\extendedicon.png" />
+	  <MauiImage Include="Resources\Images\Amounts\negativehourlybank.png" />
+	  <MauiImage Include="Resources\Images\Amounts\noamount.png" />
+	  <MauiImage Include="Resources\Images\Amounts\overtime.png" />
+	  <MauiImage Include="Resources\Images\Amounts\overtimeday.png" />
+	  <MauiImage Include="Resources\Images\Amounts\pendingjustify.png" />
+	  <MauiImage Include="Resources\Images\Amounts\permit.png" />
+	  <MauiImage Include="Resources\Images\StampType\afternoonexit.svg" />
+	  <MauiImage Include="Resources\Images\StampType\endlunchpause.svg" />
+	  <MauiImage Include="Resources\Images\StampType\morningenter.svg" />
+	  <MauiImage Include="Resources\Images\StampType\startlunchpause.svg" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <PackageReference Include="CommunityToolkit.Maui" Version="2.0.0" />
-	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
 	  <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
-	  <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.7" />
+	  <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.6" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiXaml Update="Controls\AlertEllipse.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Controls\Monthly\CalendarControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Controls\Monthly\TimesheetsList.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Controls\Page\ExtendedAmountsControlExtendedAmountsControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Controls\Timesheet\RadialProgressBarControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Controls\Timesheet\ListAmountsControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Controls\TemplatedContentPresenter.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Controls\View\SelectView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Controls\View\SwitchView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Controls\View\TextView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Controls\View\ThemeView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Controls\View\TimeView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Controls\View\ViewTemplate.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Popups\OptionsPopup.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Popups\TimePickerPopup.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Converters\Converters.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Styles\Elements\Borders.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Styles\Elements\Buttons.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Styles\Elements\ElementsStyles.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Styles\Elements\Images.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Styles\Elements\Labels.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Styles\Elements\Misc.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Templates\Amounts\AmountsControlTemplates.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Templates\Settings\SettingsTemplates.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="View\Navigation\SettingsUpdatePage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="View\Navigation\TimesheetNotesPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="View\Navigation\TimeStampDetailPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="View\Navigation\TimeStampPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="View\Navigation\WorkshiftPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="View\Navigation\WorkshiftRegistryPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="View\Page\CalendarPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="View\Page\HomePage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="View\Page\SettingsPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Controls\Timesheet\ExtendedAmountsControl.xaml.cs">
+	    <DependentUpon>ExtendedAmountsControl.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Controls\Timesheet\ExtendedAmountsControl.xaml.cs">
+	    <DependentUpon>ExtendedAmountsControl.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Controls\Timesheet\ListAmountsControl.xaml.cs">
+	    <DependentUpon>ListAmountsControl.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="View\Navigation\TimeStampPage.xaml.cs">
+	    <DependentUpon>TimeStampPage.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="View\Navigation\WorkshiftRegistryPage.xaml.cs">
+	    <DependentUpon>WorkshiftRegistryPage.xaml</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 
 </Project>
